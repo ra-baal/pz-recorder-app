@@ -32,21 +32,9 @@ namespace Recorder.ViewModel
         //    }
         //}
 
-        public string RecorderState
-        {
-            get
-            {
-                return _recorder.State.ToString();
-            }
-        }
+        public string RecorderState => _recorder.State.ToString();
 
-        public WriteableBitmap RecordedImage
-        {
-            get
-            {
-                return _recorder.ColorBitmap; 
-            }
-        }
+        public WriteableBitmap RecordedImage => _recorder.ColorBitmap;
 
         #endregion
 
@@ -81,11 +69,9 @@ namespace Recorder.ViewModel
                         o =>
                         {
                             _recorder.Start();
+                            _onPropertyChanged(nameof(RecorderState));
                         },
-                        o =>
-                        {
-                            return _recorder.State == RecorderStates.Ready;
-                        });
+                        o => _recorder.State == RecorderStates.Ready);
 
                 return _startRecording;
             }
@@ -102,11 +88,9 @@ namespace Recorder.ViewModel
                         o =>
                         {
                             _recorder.Stop();
+                            _onPropertyChanged(nameof(RecorderState));
                         },
-                        o =>
-                        {
-                            return _recorder.State == RecorderStates.Recording;
-                        });
+                        o => _recorder.State == RecorderStates.Recording);
 
                 return _stopRecording;
             }
