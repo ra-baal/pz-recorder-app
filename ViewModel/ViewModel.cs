@@ -18,7 +18,7 @@ namespace Recorder.ViewModel
         public ViewModel()
         {
             _recorder = new KinectRecorder();
-            _recorder.ActionsWhenColorFrameReady.Add(OnRecordedImageChanged);
+            _recorder.ActionsOnColorFrameReady.Add(OnRecordedImageChanged);
         }
 
         #region Binded properties.

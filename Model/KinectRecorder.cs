@@ -26,7 +26,7 @@ namespace Recorder.Model
         protected KinectSensor sensor;
         protected byte[] colorPixels;
 
-        public List<Action> ActionsWhenColorFrameReady { get; set; } = new List<Action>();
+        public List<Action> ActionsOnColorFrameReady { get; set; } = new List<Action>();
 
         public WriteableBitmap ColorBitmap { get; private set; }
 
@@ -138,7 +138,7 @@ namespace Recorder.Model
                 }
             }
 
-            foreach (var action in ActionsWhenColorFrameReady)
+            foreach (var action in ActionsOnColorFrameReady)
             {
                 action.Invoke();
             }
