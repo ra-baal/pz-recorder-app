@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Recorder.ViewModel"
+        xmlns:local="clr-namespace:Recorder.View"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Recorder" 
         Height="500" Width="800"
@@ -16,10 +18,16 @@
 
     <Window.Resources>
         <!--<view:BoolToTextConverter x:Key="BoolToText" />-->
+        <local:StateToBrushConverter x:Key="state2brush"></local:StateToBrushConverter>
     </Window.Resources>
-    
-    <Grid>
 
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding StopRecording, Mode=OneWay}"></i:InvokeCommandAction>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -33,7 +41,9 @@
                                  UriSource="C:\Users\balce\source\ProgramowanieZespolowe\RecorderTest\View\testowyobraz.jpg" />
                 </Image.Source>
             </Image>-->
-            <Image Width="640" Height="480" Source="{Binding Path=RecordedImage, Mode=OneWay}" />
+            <Border BorderThickness="5" BorderBrush="{Binding RecorderState, Mode=OneWay, Converter={StaticResource state2brush}}">
+                <Image Width="640" Height="480" Source="{Binding Path=RecordedImage, Mode=OneWay}"/>
+            </Border>
         </Viewbox>
 
         <DockPanel Grid.Row="1">

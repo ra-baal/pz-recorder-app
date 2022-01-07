@@ -19,6 +19,8 @@ namespace Recorder.ViewModel
         {
             _recorder = new KinectRecorder();
             _recorder.ActionsOnColorFrameReady.Add(OnRecordedImageChanged);
+            if (_recorder.State == RecorderStates.Ready)
+                _recorder.Start();
         }
 
         #region Binded properties.
@@ -68,7 +70,8 @@ namespace Recorder.ViewModel
                     _startRecording = new RelayCommand(
                         o =>
                         {
-                            _recorder.Start();
+                            //_recorder.Start();
+                            _recorder.StartRecording();
                             _onPropertyChanged(nameof(RecorderState));
                         },
                         o => _recorder.State == RecorderStates.Ready);

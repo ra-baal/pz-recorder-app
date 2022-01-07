@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Recorder.View
 {
@@ -25,4 +26,32 @@ namespace Recorder.View
     //        throw new NotImplementedException();
     //    }
     //}
+
+    class StateToBrushConverter : IValueConverter
+    {
+        private SolidColorBrush _brush = new SolidColorBrush();
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string state = (string) value;
+            switch (state)
+            {
+                case "NoSensor":
+                    _brush = Brushes.DimGray;
+                    break;
+                case "Ready":
+                    _brush = Brushes.GreenYellow;
+                    break;
+                case "Recording":
+                    _brush = Brushes.Red;
+                    break;
+            }
+
+            return _brush;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

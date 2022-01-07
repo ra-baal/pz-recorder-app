@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -25,6 +27,10 @@ namespace Recorder.Model
 
         protected KinectSensor sensor;
         protected byte[] colorPixels;
+
+        private int index = 0;
+        private string name = "Film";
+        private string prefix = "frame";
 
         public List<Action> ActionsOnColorFrameReady { get; set; } = new List<Action>();
 
@@ -88,7 +94,7 @@ namespace Recorder.Model
             try
             {
                 this.sensor.Start();
-                this.State = RecorderStates.Recording;
+                //this.State = RecorderStates.Recording;
             }
             catch (IOException e)
             {
@@ -105,9 +111,19 @@ namespace Recorder.Model
         {
             if (null != this.sensor)
             {
-                this.sensor.Stop();
+                //this.sensor.Stop();
                 this.State = RecorderStates.Ready;
             }
+        }
+
+        /// <summary>
+        /// Start recording the video!
+        /// </summary>
+        public virtual async void StartRecording()
+        {
+            this.State = RecorderStates.Recording;
+            Directory.CreateDirectory(name);
+            var result = await Task.Run(_saveFrameAsync);
         }
 
         #endregion
@@ -143,6 +159,19 @@ namespace Recorder.Model
                 action.Invoke();
             }
 
+        }
+
+        protected Task<int> _saveFrameAsync()
+        {
+            while (this.State == RecorderStates.Recording)
+            {
+                string filename = $@"{name}/{prefix}{index}.pcd";
+                Utilities.Functions.savePointCloudDataFromKinect(filename);
+                //File.WriteAllText($@"{name}/{prefix}{index}.txt", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+                index++;
+                Thread.Sleep(1000);
+            }
+            return Task.FromResult(0);
         }
 
         #endregion

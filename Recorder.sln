@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recorder", "Recorder.csproj", "{51C3E2B1-7E7F-4790-8F72-B7AD402972B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{51C3E2B1-7E7F-4790-8F72-B7AD402972B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51C3E2B1-7E7F-4790-8F72-B7AD402972B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51C3E2B1-7E7F-4790-8F72-B7AD402972B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
