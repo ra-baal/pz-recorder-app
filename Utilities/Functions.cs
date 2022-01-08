@@ -15,9 +15,5 @@ namespace Utilities
         /// <param name="binaryFile">Whether output file should be binary</param>
         [DllImport(_dll)]
         public static extern void savePointCloudDataFromKinect(string output, bool binaryFile = false);
-
-        [DllImport(_dll)]
-        public static extern void test();
-
     }
 }

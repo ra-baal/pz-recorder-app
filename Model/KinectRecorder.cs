@@ -124,7 +124,7 @@ namespace Recorder.Model
             StopPreview();
 
             this.State = RecorderStates.Recording;
-            _dirname = _dirprefix + " " + DateTime.Now.ToString();
+            _dirname = _dirprefix + " " + DateTime.Now.ToString("yyyyMMdd_HHmmss");
             Directory.CreateDirectory(_dirname);
             int result = await Task.Run(_saveFramesWhileRecordingAsync);
         }

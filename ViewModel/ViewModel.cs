@@ -73,7 +73,7 @@ namespace Recorder.ViewModel
                             _recorder.StartRecording();
                             _onPropertyChanged(nameof(RecorderState));
                         },
-                        o => _recorder.State == RecorderStates.Ready);
+                        o => _recorder.State == RecorderStates.Ready || _recorder.State == RecorderStates.Preview);
 
                 return _startRecording;
             }
