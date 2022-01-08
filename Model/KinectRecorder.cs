@@ -34,7 +34,7 @@ namespace Recorder.Model
         protected string _prefix = "3dframe"; // Prefix of frame file names.
         protected List<string> _frameNames = new List<string>(); // Names of recorded frame files.
 
-        public List<Action> ActionsOnColorFrameReady { get; set; } = new List<Action>();
+        public List<Action> ActionsOnPreviewFrameReady { get; set; } = new List<Action>();
 
         public WriteableBitmap ColorBitmap { get; private set; }
 
@@ -69,7 +69,7 @@ namespace Recorder.Model
                 this.ColorBitmap = new WriteableBitmap(this._sensor.ColorStream.FrameWidth, this._sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
 
                 // Add an event handler to be called whenever there is new color frame data
-                this._sensor.ColorFrameReady += this._sensorColorFrameReady;
+                this._sensor.ColorFrameReady += this._sensorPreviewFrameReady;
                 //this.sensor.DepthFrameReady // głębia
             }
 
@@ -142,7 +142,7 @@ namespace Recorder.Model
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-        protected void _sensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
+        protected void _sensorPreviewFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
 
             using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
@@ -161,7 +161,7 @@ namespace Recorder.Model
                 }
             }
 
-            foreach (var action in ActionsOnColorFrameReady)
+            foreach (var action in ActionsOnPreviewFrameReady)
             {
                 action.Invoke();
             }

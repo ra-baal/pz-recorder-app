@@ -18,7 +18,7 @@ namespace Recorder.ViewModel
         public ViewModel()
         {
             _recorder = new KinectRecorder();
-            _recorder.ActionsOnColorFrameReady.Add(OnRecordedImageChanged);
+            _recorder.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
             if (_recorder.State == RecorderStates.Ready)
                 _recorder.StartPreview();
         }
@@ -52,7 +52,7 @@ namespace Recorder.ViewModel
             }
         }
         
-        public void OnRecordedImageChanged()
+        public void OnPreviewImageChanged()
         {
             _onPropertyChanged(nameof(RecordedImage));
         }
