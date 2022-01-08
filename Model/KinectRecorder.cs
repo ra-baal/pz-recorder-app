@@ -18,6 +18,7 @@ namespace Recorder.Model
     {
         NoSensor,
         Ready,
+        Preview,
         Recording
     }
 
@@ -25,12 +26,13 @@ namespace Recorder.Model
     {
         #region Data.
 
-        protected KinectSensor sensor;
-        protected byte[] colorPixels;
+        protected KinectSensor _sensor;
+        protected byte[] _colorPixels;
 
-        private int index = 0;
-        private string name = "Film";
-        private string prefix = "frame";
+        protected int _framerate = 3; // Frames per a second.
+        protected string _dirname = "Real3DFilm"; // Main directory of a film.
+        protected string _prefix = "3dframe"; // Prefix of frame file names.
+        protected List<string> _frameNames = new List<string>(); // Names of recorded frame files.
 
         public List<Action> ActionsOnColorFrameReady { get; set; } = new List<Action>();
 
@@ -48,71 +50,51 @@ namespace Recorder.Model
             {
                 if (potentialSensor.Status == KinectStatus.Connected)
                 {
-                    this.sensor = potentialSensor;
+                    this._sensor = potentialSensor;
                     break;
                 }
             }
 
-            if (this.sensor != null)
+            if (this._sensor != null)
             {
                 this.State = RecorderStates.Ready;
 
                 // Turn on the color stream to receive color frames
-                this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+                this._sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
 
                 // Allocate space to put the pixels we'll receive
-                this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+                this._colorPixels = new byte[this._sensor.ColorStream.FramePixelDataLength];
 
                 // This is the bitmap we'll display on-screen
-                this.ColorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+                this.ColorBitmap = new WriteableBitmap(this._sensor.ColorStream.FrameWidth, this._sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
 
                 // Add an event handler to be called whenever there is new color frame data
-                this.sensor.ColorFrameReady += this._sensorColorFrameReady;
+                this._sensor.ColorFrameReady += this._sensorColorFrameReady;
                 //this.sensor.DepthFrameReady // głębia
             }
 
-            if (this.sensor == null)
+            if (this._sensor == null)
             {
                 this.State = RecorderStates.NoSensor;
             }
 
         }
-
-        //public bool IsReadyOrRecording
-        //{
-        //    get
-        //    {
-        //        return this.State == States.Ready || this.State == States.Recording;
-        //    }
-        //}
 
         /// <summary>
         /// Start the sensor!
         /// </summary>
-        public void Start()
+        public void StartPreview()
         {
             try
             {
-                this.sensor.Start();
-                //this.State = RecorderStates.Recording;
+                this._sensor.Start();
+                this.State = RecorderStates.Preview;
             }
             catch (IOException e)
             {
-                this.sensor = null;
+                this._sensor = null;
                 this.State = RecorderStates.NoSensor;
                 throw new IOException("Kinect recording start failed.", e);
-            }
-        }
-
-        /// <summary>
-        /// Stop the sensor!
-        /// </summary>
-        public void Stop()
-        {
-            if (null != this.sensor)
-            {
-                //this.sensor.Stop();
-                this.State = RecorderStates.Ready;
             }
         }
 
@@ -122,8 +104,33 @@ namespace Recorder.Model
         public virtual async void StartRecording()
         {
             this.State = RecorderStates.Recording;
-            Directory.CreateDirectory(name);
-            var result = await Task.Run(_saveFrameAsync);
+            Directory.CreateDirectory(_dirname);
+            File.AppendAllText($"{_dirname}/settings.vrfilm", "pcd\n");
+            var result = await Task.Run(_saveFramesWhileRecordingAsync);
+        }
+
+        /// <summary>
+        /// Stops preview and recording.
+        /// </summary>
+        public void Stop()
+        {
+            if (null != this._sensor)
+            {
+                if (State == RecorderStates.Recording)
+                {
+                    using (StreamWriter sw = new StreamWriter($"{_dirname}/settings.vrfilm"))
+                    {
+                        sw.WriteLine("pcd");
+                        sw.WriteLine(_frameNames.Count);
+                        _frameNames.ForEach(sw.WriteLine);
+                    }
+
+                    _frameNames = new List<string>();
+                }
+
+                //this.sensor.Stop();
+                this.State = RecorderStates.Ready; // And then _saveFramesWhileRecordingAsync ends.
+            }
         }
 
         #endregion
@@ -143,12 +150,12 @@ namespace Recorder.Model
                 if (colorFrame != null)
                 {
                     // Copy the pixel data from the image to a temporary array
-                    colorFrame.CopyPixelDataTo(this.colorPixels);
+                    colorFrame.CopyPixelDataTo(this._colorPixels);
 
                     // Write the pixel data into our bitmap
                     this.ColorBitmap.WritePixels(
                         new Int32Rect(0, 0, this.ColorBitmap.PixelWidth, this.ColorBitmap.PixelHeight),
-                        this.colorPixels,
+                        this._colorPixels,
                         this.ColorBitmap.PixelWidth * sizeof(int),
                         0);
                 }
@@ -161,15 +168,18 @@ namespace Recorder.Model
 
         }
 
-        protected Task<int> _saveFrameAsync()
+        protected Task<int> _saveFramesWhileRecordingAsync()
         {
+            int index = 0;
+
             while (this.State == RecorderStates.Recording)
             {
-                string filename = $@"{name}/{prefix}{index}.pcd";
+                string filename = $@"{_dirname}/{_prefix}{index}.pcd";
                 Utilities.Functions.savePointCloudDataFromKinect(filename);
+                _frameNames.Add(filename);
                 //File.WriteAllText($@"{name}/{prefix}{index}.txt", DateTime.Now.ToString(CultureInfo.InvariantCulture));
                 index++;
-                Thread.Sleep(1000);
+                Thread.Sleep(1000 / _framerate);
             }
             return Task.FromResult(0);
         }

@@ -39,10 +39,16 @@ namespace Recorder.View
                     _brush = Brushes.DimGray;
                     break;
                 case "Ready":
+                    _brush = Brushes.LightGray;
+                    break;
+                case "Preview":
                     _brush = Brushes.GreenYellow;
                     break;
                 case "Recording":
                     _brush = Brushes.Red;
+                    break;
+                default: // Unknown recorder state;
+                    _brush = Brushes.Black;
                     break;
             }
 
