@@ -30,9 +30,10 @@ namespace Recorder.Model
         protected byte[] _colorPixels;
 
         protected int _framerate = 3; // Frames per a second.
-        protected string _dirname = "Real3DFilm"; // Main directory of a film.
-        protected string _prefix = "3dframe"; // Prefix of frame file names.
-        protected List<string> _frameNames = new List<string>(); // Names of recorded frame files.
+        protected string _dirprefix = "Real3DFilm"; // Prefix of main directory of a film.
+        protected string _dirname; // Name of main directory of a film. It's set in StartRecording.
+        protected string _fileprefix = "3dframe"; // Prefix of frame file names.
+        protected List<string> _fileNames = new List<string>(); // Names of recorded frame files.
 
         public List<Action> ActionsOnPreviewFrameReady { get; set; } = new List<Action>();
 
@@ -85,6 +86,8 @@ namespace Recorder.Model
         /// </summary>
         public void StartPreview()
         {
+            StopRecording();
+
             try
             {
                 this._sensor.Start();
@@ -99,37 +102,53 @@ namespace Recorder.Model
         }
 
         /// <summary>
+        /// Stops preview.
+        /// </summary>
+        public void StopPreview()
+        {
+            if (null != this._sensor)
+            {
+                if (State == RecorderStates.Preview)
+                {
+                    this._sensor.Stop();
+                    this.State = RecorderStates.Ready;
+                }
+            }
+        }
+
+        /// <summary>
         /// Start recording the video!
         /// </summary>
         public virtual async void StartRecording()
         {
+            StopPreview();
+
             this.State = RecorderStates.Recording;
+            _dirname = _dirprefix + " " + DateTime.Now.ToString();
             Directory.CreateDirectory(_dirname);
-            File.AppendAllText($"{_dirname}/settings.vrfilm", "pcd\n");
-            var result = await Task.Run(_saveFramesWhileRecordingAsync);
+            int result = await Task.Run(_saveFramesWhileRecordingAsync);
         }
 
         /// <summary>
-        /// Stops preview and recording.
+        /// Stops recording.
         /// </summary>
-        public void Stop()
+        public void StopRecording()
         {
             if (null != this._sensor)
             {
                 if (State == RecorderStates.Recording)
                 {
-                    using (StreamWriter sw = new StreamWriter($"{_dirname}/settings.vrfilm"))
+                    using (StreamWriter sw = new StreamWriter($@"{_dirname}/settings.vrfilm"))
                     {
                         sw.WriteLine("pcd");
-                        sw.WriteLine(_frameNames.Count);
-                        _frameNames.ForEach(sw.WriteLine);
+                        sw.WriteLine(_fileNames.Count);
+                        _fileNames.ForEach(sw.WriteLine);
                     }
 
-                    _frameNames = new List<string>();
-                }
+                    _fileNames = new List<string>();
 
-                //this.sensor.Stop();
-                this.State = RecorderStates.Ready; // And then _saveFramesWhileRecordingAsync ends.
+                    this.State = RecorderStates.Ready; // And then _saveFramesWhileRecordingAsync ends.
+                }
             }
         }
 
@@ -174,9 +193,10 @@ namespace Recorder.Model
 
             while (this.State == RecorderStates.Recording)
             {
-                string filename = $@"{_dirname}/{_prefix}{index}.pcd";
-                Utilities.Functions.savePointCloudDataFromKinect(filename);
-                _frameNames.Add(filename);
+                string filename = $@"{_fileprefix}{index}.pcd";
+                string filepath = $@"{_dirname}/{filename}";
+                Utilities.Functions.savePointCloudDataFromKinect(filepath);
+                _fileNames.Add(filename);
                 //File.WriteAllText($@"{name}/{prefix}{index}.txt", DateTime.Now.ToString(CultureInfo.InvariantCulture));
                 index++;
                 Thread.Sleep(1000 / _framerate);
@@ -188,7 +208,7 @@ namespace Recorder.Model
 
         ~KinectRecorder()
         {
-            this.Stop();
+            this.StopRecording();
         }
 
     }

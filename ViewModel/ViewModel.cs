@@ -89,8 +89,8 @@ namespace Recorder.ViewModel
                     _stopRecording = new RelayCommand(
                         o =>
                         {
-                            _recorder.Stop();
-                            //_recorder.StartPreview(); // Restart preview. 
+                            _recorder.StopRecording();
+                            _recorder.StartPreview(); // Restart preview. 
                             _onPropertyChanged(nameof(RecorderState));
                         },
                         o => _recorder.State == RecorderStates.Recording);
