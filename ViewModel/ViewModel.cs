@@ -13,30 +13,21 @@ namespace Recorder.ViewModel
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        private KinectRecorder _recorder;
+        private KinectMediator _kinect;
 
         public ViewModel()
         {
-            _recorder = new KinectRecorder();
-            _recorder.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
-            if (_recorder.State == RecorderStates.Ready)
-                _recorder.StartPreview();
+            _kinect = new KinectMediator(OnPreviewImageChanged);
+            //_kinect.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
+            //if (_recorder.State == RecorderStates.Ready)
+                //_recorder.StartPreview();
         }
 
         #region Binded properties.
 
-        //public bool IsRecorderReady
-        //{
-        //    get
-        //    {
-        //        //return _recorder.IsReadyOrRecording;
-        //        return _recorder.State == RecorderStates.Ready;
-        //    }
-        //}
+        public string RecorderState => _kinect.State.ToString();
 
-        public string RecorderState => _recorder.State.ToString();
-
-        public WriteableBitmap RecordedImage => _recorder.ColorBitmap;
+        public WriteableBitmap RecordedImage => _kinect.ColorBitmap;
 
         #endregion
 
@@ -70,10 +61,10 @@ namespace Recorder.ViewModel
                     _startRecording = new RelayCommand(
                         o =>
                         {
-                            _recorder.StartRecording();
+                            _kinect.RecordingMode();
                             _onPropertyChanged(nameof(RecorderState));
                         },
-                        o => _recorder.State == RecorderStates.Ready || _recorder.State == RecorderStates.Preview);
+                        o => _kinect.State == RecorderStates.Ready || _kinect.State == RecorderStates.Preview);
 
                 return _startRecording;
             }
@@ -89,11 +80,10 @@ namespace Recorder.ViewModel
                     _stopRecording = new RelayCommand(
                         o =>
                         {
-                            _recorder.StopRecording();
-                            _recorder.StartPreview(); // Restart preview. 
+                            _kinect.PreviewMode(); 
                             _onPropertyChanged(nameof(RecorderState));
                         },
-                        o => _recorder.State == RecorderStates.Recording);
+                        o => _kinect.State == RecorderStates.Recording);
 
                 return _stopRecording;
             }
