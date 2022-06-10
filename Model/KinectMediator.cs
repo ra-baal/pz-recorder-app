@@ -16,7 +16,7 @@ namespace Recorder.Model
         Recording
     }
 
-    public class KinectMediator
+    public class KinectMediator : IKinectMediator
     {
         private KinectPreview _preview;
         private KinectCloudRecorder _cloudRecorder;
@@ -41,7 +41,7 @@ namespace Recorder.Model
 
 
 
-            bool podglądAleNieNagrywaWielokrotnie = false;
+            bool podglądAleNieNagrywaWielokrotnie = true;
             if (podglądAleNieNagrywaWielokrotnie)
                 _preview.Start();
 

@@ -8,16 +8,18 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 using Recorder.Model;
+using Utilities;
 
 namespace Recorder.ViewModel
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        private KinectMediator _kinect;
+        private IKinectMediator _kinect;
 
         public ViewModel()
         {
-            _kinect = new KinectMediator(OnPreviewImageChanged);
+            //_kinect = new KinectMediator(OnPreviewImageChanged);
+            _kinect = new FakeKinectMediator(OnPreviewImageChanged); // When without a device.
             //_kinect.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
             //if (_recorder.State == RecorderStates.Ready)
                 //_recorder.StartPreview();

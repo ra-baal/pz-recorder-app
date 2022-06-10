@@ -103,6 +103,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\KinectCloudRecorder.cs" />
+    <Compile Include="Model\FakeKinectMediator.cs" />
+    <Compile Include="Model\IKinectMediator.cs" />
     <Compile Include="Model\KinectMediator.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
