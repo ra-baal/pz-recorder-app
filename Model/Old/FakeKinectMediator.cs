@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
 {
-
+    [Obsolete]
     public class FakeKinectMediator : IKinectMediator
     {
         public RecorderStates State { get; private set; }

@@ -1,35 +1,40 @@
-﻿using System;
+﻿using Recorder.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-using Recorder.Model;
-using Utilities;
 
 namespace Recorder.ViewModel
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        private IKinectMediator _kinect;
+        //private IKinectMediator _kinect;
+        private IRecordingManager _recordingManager;
 
         public ViewModel()
         {
+            _recordingManager = new RecordingManager();
+
+            //_kinect = new CloudRecordingManager();
             //_kinect = new KinectMediator(OnPreviewImageChanged);
-            _kinect = new FakeKinectMediator(OnPreviewImageChanged); // When without a device.
+            //_kinect = new FakeKinectMediator(OnPreviewImageChanged); // When without a device.
             //_kinect.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
             //if (_recorder.State == RecorderStates.Ready)
-                //_recorder.StartPreview();
+            //_recorder.StartPreview();
         }
+
 
         #region Binded properties.
 
-        public string RecorderState => _kinect.State.ToString();
+        public string RecorderState => _recordingManager.GetStates()[1].ToString();
 
-        public WriteableBitmap RecordedImage => _kinect.ColorBitmap;
+        public WriteableBitmap RecordedImage =>_recordingManager.GetColorBitmap();
 
         #endregion
 
@@ -45,6 +50,7 @@ namespace Recorder.ViewModel
             }
         }
         
+        // ToDo: Trzeba wrzucić do środka RecordingManagera, żeby odświeżało widok.
         public void OnPreviewImageChanged()
         {
             _onPropertyChanged(nameof(RecordedImage));
@@ -63,10 +69,14 @@ namespace Recorder.ViewModel
                     _startRecording = new RelayCommand(
                         o =>
                         {
-                            _kinect.RecordingMode();
+                            OnPreviewImageChanged(); // ToDo: Tymczasowo widok odświeżany przyciskiem start.
+
+                            _recordingManager.RecordingMode();
                             _onPropertyChanged(nameof(RecorderState));
+
                         },
-                        o => _kinect.State == RecorderStates.Ready || _kinect.State == RecorderStates.Preview);
+                        //o => _recordingManager.State == RecorderStates.Ready || _recordingManager.State == RecorderStates.Preview);
+                        o => true);
 
                 return _startRecording;
             }
@@ -82,10 +92,11 @@ namespace Recorder.ViewModel
                     _stopRecording = new RelayCommand(
                         o =>
                         {
-                            _kinect.PreviewMode(); 
+                            _recordingManager.PreviewMode();
                             _onPropertyChanged(nameof(RecorderState));
                         },
-                        o => _kinect.State == RecorderStates.Recording);
+                        //o => _recordingManager.State == RecorderStates.Recording);
+                        o => true);
 
                 return _stopRecording;
             }

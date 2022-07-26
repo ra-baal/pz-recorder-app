@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Recorder.Model
 {
+    [Obsolete]
     public class KinectCloudRecorder
     {
         #region Data.

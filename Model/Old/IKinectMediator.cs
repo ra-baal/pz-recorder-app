@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
 {
+    [Obsolete]
     public interface IKinectMediator
     {
         // Interface requires public properties only.

@@ -42,6 +42,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -52,6 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>3B3188142224AC21B5684D01DA6A22B00D0CD5D2</ManifestCertificateThumbprint>
@@ -102,17 +104,22 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\KinectCloudRecorder.cs" />
-    <Compile Include="Model\FakeKinectMediator.cs" />
-    <Compile Include="Model\IKinectMediator.cs" />
-    <Compile Include="Model\KinectMediator.cs" />
+    <Compile Include="Model\IRecordingManager.cs" />
+    <Compile Include="Model\Old\KinectCloudRecorder.cs" />
+    <Compile Include="Model\Old\FakeKinectMediator.cs" />
+    <Compile Include="Model\Old\IKinectMediator.cs" />
+    <Compile Include="Model\Old\KinectMediator.cs" />
+    <Compile Include="Model\Old\KinectV2.cs" />
+    <Compile Include="Model\PointCloudRecorderState.cs" />
+    <Compile Include="Model\RecordingManager.cs" />
+    <Compile Include="Model\Structs.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
     <Compile Include="View\Converters.cs" />
     <Compile Include="View\MainWindow.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\KinectPreview.cs" />
+    <Compile Include="Model\Old\KinectPreview.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -147,12 +154,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Utilities\Utilities.csproj">
-      <Project>{e30ba5f6-aa10-4623-b36d-1102c2fe2fad}</Project>
-      <Name>Utilities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
@@ -163,6 +164,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Utilities\Utilities.csproj">
+      <Project>{e30ba5f6-aa10-4623-b36d-1102c2fe2fad}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
