@@ -3,7 +3,7 @@
 namespace Recorder.Model
 {
     // Typ identyczny jak w Windows.h -> wingdi.h
-    // Chyba to samo co PixelFormats.Bgr32
+    // To samo co PixelFormats.Bgr32
     public struct RGBQUAD
     {
         public byte rgbBlue;

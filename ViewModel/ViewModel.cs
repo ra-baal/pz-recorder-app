@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-
 using Recorder.Model;
 using Recorder.Service;
-using Utilities;
 
 namespace Recorder.ViewModel
 {
     public class ViewModel : ViewModelBase
     {
-        private readonly IKinectMediator _kinect;
+        private readonly IModel _model;
         private readonly IWindowService _windowService;
         private readonly IMessageBoxService _messageService;
 
@@ -23,12 +16,14 @@ namespace Recorder.ViewModel
         {
             try
             {
-                _kinect = new KinectMediator(OnPreviewImageChanged);
+                _model = new ModelImpl();
+                _model.SetOnPreviewImageChanged(OnPreviewImageChanged);
             }
-            catch (NullReferenceException)
+            catch (Exception)
             {
-                _kinect = new FakeKinectMediator(OnPreviewImageChanged); // When without a device.
+                _model = new FakeModel(); // When without a device.
             }
+
             _windowService = windowService;
             _messageService = messageService;
             //_kinect.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
@@ -38,9 +33,9 @@ namespace Recorder.ViewModel
 
         #region Binded properties.
 
-        public string RecorderState => _kinect.State.ToString();
+        public string RecorderState => _model.State.ToString();
 
-        public WriteableBitmap RecordedImage => _kinect.ColorBitmap;
+        public WriteableBitmap RecordedImage => _model.ColorBitmap;
 
         #endregion
 
@@ -64,11 +59,11 @@ namespace Recorder.ViewModel
                     _startRecording = new RelayCommand(
                         o =>
                         {
-                            _kinect.RecordingMode();
+                            _model.RecordingMode();
                             _onPropertyChanged(nameof(RecorderState));
                         },
-                        o => _kinect.State == RecorderStates.Ready || _kinect.State == RecorderStates.Preview);
-
+                        o => _model.State == Model.RecorderState.Ready || _model.State == Model.RecorderState.Preview);
+                
                 return _startRecording;
             }
 
@@ -83,10 +78,10 @@ namespace Recorder.ViewModel
                     _stopRecording = new RelayCommand(
                         o =>
                         {
-                            _kinect.PreviewMode(); 
+                            _model.PreviewMode(); 
                             _onPropertyChanged(nameof(RecorderState));
                         },
-                        o => _kinect.State == RecorderStates.Recording);
+                        o => _model.State == Model.RecorderState.Recording);
 
                 return _stopRecording;
             }

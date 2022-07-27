@@ -111,11 +111,13 @@
     <Compile Include="DependencyContainer.cs" />
     <Compile Include="Entities\MessageBoxKind.cs" />
     <Compile Include="Entities\MessageBoxResponse.cs" />
-    <Compile Include="Model\IKinectCloudRecorder.cs" />
-    <Compile Include="Model\KinectCloudRecorder.cs" />
-    <Compile Include="Model\FakeKinectMediator.cs" />
-    <Compile Include="Model\IKinectMediator.cs" />
-    <Compile Include="Model\KinectMediator.cs" />
+    <Compile Include="Model\Obsolete\IKinectCloudRecorder.cs" />
+    <Compile Include="Model\Obsolete\KinectCloudRecorder.cs" />
+    <Compile Include="Model\Obsolete\FakeKinectMediator.cs" />
+    <Compile Include="Model\Obsolete\IKinectMediator.cs" />
+    <Compile Include="Model\Obsolete\KinectMediator.cs" />
+    <Compile Include="Model\Obsolete\KinectPreview.cs" />
+    <Compile Include="Model\Obsolete\KinectV2.cs" />
     <Compile Include="Model\RecorderSettings.cs" />
     <Compile Include="RecorderApplication.cs" />
     <Compile Include="Service\IMessageBoxService.cs" />
@@ -134,7 +136,6 @@
     <Compile Include="View\WindowView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\KinectPreview.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -173,9 +174,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Utilities\Utilities.csproj">
-      <Project>{e30ba5f6-aa10-4623-b36d-1102c2fe2fad}</Project>
-      <Name>Utilities</Name>
+    <ProjectReference Include="Recorder.Model\Recorder.Model.csproj">
+      <Project>{7c81631a-8d09-4c37-abdb-34475ee6bbe1}</Project>
+      <Name>Recorder.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

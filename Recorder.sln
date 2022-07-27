@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recorder", "Recorder.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "Utilities\Utilities.csproj", "{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recorder.Model", "Recorder.Model\Recorder.Model.csproj", "{7C81631A-8D09-4C37-ABDB-34475EE6BBE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E30BA5F6-AA10-4623-B36D-1102C2FE2FAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C81631A-8D09-4C37-ABDB-34475EE6BBE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C81631A-8D09-4C37-ABDB-34475EE6BBE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C81631A-8D09-4C37-ABDB-34475EE6BBE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C81631A-8D09-4C37-ABDB-34475EE6BBE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

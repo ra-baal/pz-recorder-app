@@ -22,6 +22,7 @@ namespace Recorder.Model
         #region Handlers.
 
         private void* _objptr;
+        private WriteableBitmap _colorBitmap;
 
         public RecordingManager()
         {
@@ -29,15 +30,17 @@ namespace Recorder.Model
 
             if (_objptr == null)
                 throw new ExternalException();
+
+            _colorBitmap = null;
         }
 
         public int GetRecordersNumber() => RecordingManager_GetRecordersNumber(_objptr);
 
+        // Ten kod też działa.
         //public (byte b, byte g, byte r)[] GetColorBitmap()
         //{
         //    Colors colors = RecordingManager_GetColorBitmap(_objptr);
 
-        //    // Ten kod też działa.
         //    (byte b, byte g, byte r)[] bitmap = new (byte r, byte g, byte b)[colors.Heigth * colors.Width];
 
         //    RGBQUAD* rgbquadPtr = colors.Data;
@@ -65,14 +68,15 @@ namespace Recorder.Model
             Colors colors = RecordingManager_GetColorBitmap(_objptr);
 
             double dpi = 96.0; // Wartość z ColorBasics-WPF.
-            // - Bitmapa powinna być polem.
-            WriteableBitmap colorBitmap = new WriteableBitmap(
-                colors.Width,
-                colors.Heigth,
-                dpi,
-                dpi,
-                PixelFormats.Bgr32, // chyba to samo co RGBQUAD
-                null);
+
+            if (_colorBitmap == null)
+                _colorBitmap = new WriteableBitmap(
+                    colors.Width,
+                    colors.Heigth,
+                    dpi,
+                    dpi,
+                    PixelFormats.Bgr32, // to samo co RGBQUAD
+                    null);
 
             // (v1) 
             // nie działa - Jak by tu zrobić bez pośredniej tablicy bajtów?
@@ -83,22 +87,22 @@ namespace Recorder.Model
             //            0);
 
             // (v2) 
-            // - Tutaj można by pewnie użyć jakiejś funkcji kopijącej cały ciąg pamięci.
+            // - Tutaj można by pewnie użyć jakiejś funkcji kopiującej cały ciąg pamięci.
             // - Tablica jeśli już musi być, to powinna być polem.
             byte[] colorPixels = new byte[colors.Width*colors.Heigth*4];
             for (int i = 0; i < colorPixels.Length; i++)
                 colorPixels[i] = *(((byte*)colors.Data)+i);
             
-            colorBitmap.WritePixels(
-                        new Int32Rect(0, 0, colorBitmap.PixelWidth, colorBitmap.PixelHeight),
+            _colorBitmap.WritePixels(
+                        new Int32Rect(0, 0, _colorBitmap.PixelWidth, _colorBitmap.PixelHeight),
                         colorPixels,
-                        colorBitmap.PixelWidth * sizeof(int),
+                        _colorBitmap.PixelWidth * sizeof(int),
                         0);
 
-            return colorBitmap;
+            return _colorBitmap;
         }
 
-        public void RecordingMode() => RecordingManager_PreviewMode(_objptr);
+        public void RecordingMode() => RecordingManager_RecordingMode(_objptr);
 
         public void PreviewMode() => RecordingManager_PreviewMode(_objptr);
 
@@ -109,4 +113,5 @@ namespace Recorder.Model
 
 
     }
+
 }

@@ -1,9 +1,11 @@
-﻿
-
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
 {
+    /// <summary>
+    /// Wymagania modelu wobec API biblioteki dll?
+    /// Być może zbędne.
+    /// </summary>
     public interface IRecordingManager
     {
         int GetRecordersNumber();

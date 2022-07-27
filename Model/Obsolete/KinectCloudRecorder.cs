@@ -64,19 +64,20 @@ namespace Recorder.Model
         {
             int index = 0;
 
-            Utilities.Functions.setKinect();
+            // Utilities wymagane
+            //Utilities.Functions.setKinect();
 
-            while (this.State == RecorderStates.Recording)
-            {
-                string filename = $@"{_fileprefix}{index}.pcd";
-                string filepath = $@"{_dirname}/{filename}";
-                Utilities.Functions.recordAndSaveCloud(filepath);
-                _fileNames.Add(filename);
+            //while (this.State == RecorderStates.Recording)
+            //{
+            //    string filename = $@"{_fileprefix}{index}.pcd";
+            //    string filepath = $@"{_dirname}/{filename}";
+            //    Utilities.Functions.recordAndSaveCloud(filepath);
+            //    _fileNames.Add(filename);
 
-                //Thread.Sleep(1000 / _framerate);
+            //    //Thread.Sleep(1000 / _framerate);
 
-                index++;
-            }
+            //    index++;
+            //}
 
             return Task.FromResult(0);
         }

@@ -1,4 +1,5 @@
-﻿//using System.Runtime.InteropServices;
+﻿//using System;
+//using System.Runtime.InteropServices;
 //using System.Windows.Media.Imaging;
 
 //namespace Recorder.Model
@@ -83,7 +84,7 @@
 //            ColorBitmap.WritePixels(new System.Windows.Int32Rect(),)
 
 
-//            return 
+//            return
 //        }
 
 //        ~KinectV2()

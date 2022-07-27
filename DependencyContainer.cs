@@ -17,7 +17,7 @@ namespace Recorder
         {
             Bind<IWindowService>().To<WindowService>();
             Bind<IMessageBoxService>().To<MessageBoxService>();
-            Bind<IKinectCloudRecorder>().To<KinectCloudRecorder>();
+            Bind<IModel>().To<ModelImpl>();
         }
     }
 }
