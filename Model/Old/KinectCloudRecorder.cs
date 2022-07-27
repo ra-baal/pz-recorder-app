@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace Recorder.Model
 {
-    public class KinectCloudRecorder : IKinectCloudRecorder
+    [Obsolete]
+    public class KinectCloudRecorder
     {
         #region Data.
 
         //protected int _framerate = 1; // Frames per a second.
+        protected string _dirprefix = "Real3DFilm"; // Prefix of main directory of a film.
         protected string _dirname; // Name of main directory of a film. It's set in StartRecording.
+        protected string _fileprefix = "3dframe"; // Prefix of frame file names.
         protected List<string> _fileNames = new List<string>(); // Names of recorded frame files.
 
         public RecorderStates State { get; protected set; }
@@ -19,24 +22,6 @@ namespace Recorder.Model
         #endregion
 
         #region Public section.
-
-        public string DirectoryPrefix
-        {
-            get => RecorderSettings._dirprefix;
-            set => RecorderSettings._dirprefix = value;
-        }
-
-        public string FilePrefix
-        {
-            get => RecorderSettings._fileprefix;
-            set => RecorderSettings._fileprefix = value;
-        }
-
-        public string Path
-        {
-            get => RecorderSettings._path;
-            set => RecorderSettings._path = value;
-        }
 
         public KinectCloudRecorder()
         {
@@ -46,8 +31,8 @@ namespace Recorder.Model
         public virtual async void Start()
         {
             this.State = RecorderStates.Recording;
-            _dirname = RecorderSettings._dirprefix + " " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            Directory.CreateDirectory($@"{RecorderSettings._path}/{_dirname}");
+            _dirname = _dirprefix + " " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            Directory.CreateDirectory(_dirname);
             int result = await Task.Run(_saveFramesWhileRecordingAsync);
         }
 
@@ -83,8 +68,8 @@ namespace Recorder.Model
 
             while (this.State == RecorderStates.Recording)
             {
-                string filename = $@"{RecorderSettings._fileprefix}{index}.pcd";
-                string filepath = $@"{RecorderSettings._path}/{_dirname}/{filename}";
+                string filename = $@"{_fileprefix}{index}.pcd";
+                string filepath = $@"{_dirname}/{filename}";
                 Utilities.Functions.recordAndSaveCloud(filepath);
                 _fileNames.Add(filename);
 
@@ -100,10 +85,10 @@ namespace Recorder.Model
 
         ~KinectCloudRecorder()
         {
-            this.Stop(); 
+            this.Stop();
         }
 
     }
 
-    
+
 }

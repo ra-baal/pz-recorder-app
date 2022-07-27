@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
 {
+    [Obsolete]
     public enum RecorderStates
     {
         NoSensor,
@@ -16,6 +17,7 @@ namespace Recorder.Model
         Recording
     }
 
+    [Obsolete]
     public class KinectMediator : IKinectMediator
     {
         private KinectPreview _preview;

@@ -15,7 +15,7 @@ using Microsoft.Kinect;
 
 namespace Recorder.Model
 {
-
+    [Obsolete]
     public class KinectPreview
     {
         #region Data.
