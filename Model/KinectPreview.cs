@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.Kinect;
 
 namespace Recorder.Model
@@ -55,7 +56,11 @@ namespace Recorder.Model
                 this.ColorBitmap = new WriteableBitmap(this._sensor.ColorStream.FrameWidth, this._sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
 
                 // Add an event handler to be called whenever there is new color frame data
-                this._sensor.ColorFrameReady += this._sensorPreviewFrameReady;
+                Dispatcher.CurrentDispatcher.Invoke(() =>
+                {
+                    this._sensor.ColorFrameReady += this._sensorPreviewFrameReady;
+                });
+
                 //this.sensor.DepthFrameReady // głębia
             }
 

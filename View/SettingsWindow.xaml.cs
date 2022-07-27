@@ -10,18 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Recorder.View;
+using Recorder.ViewModel;
 
-namespace Recorder
+namespace Recorder.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class MainWindow : WindowView
+    public partial class SettingsWindow : WindowView
     {
-        public MainWindow()
+        public SettingsWindow()
         {
             InitializeComponent();
         }

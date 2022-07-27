@@ -24,7 +24,7 @@ namespace Recorder.Model
         public RecorderStates State { get; private set; }
         public WriteableBitmap ColorBitmap { get; private set; }
 
-        private List<Action> ActionsOnPreviewFrameReady;
+        private readonly List<Action> ActionsOnPreviewFrameReady;
 
         public KinectMediator(Action onPreviewFrameReady)
         {
@@ -35,8 +35,10 @@ namespace Recorder.Model
 
         private void _previewOn()
         {
-            _preview = new KinectPreview();
-            _preview.ActionsOnPreviewFrameReady = this.ActionsOnPreviewFrameReady;
+            _preview = new KinectPreview
+            {
+                ActionsOnPreviewFrameReady = this.ActionsOnPreviewFrameReady
+            };
             this.ColorBitmap = _preview.ColorBitmap;
 
 

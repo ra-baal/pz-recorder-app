@@ -8,21 +8,32 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 using Recorder.Model;
+using Recorder.Service;
 using Utilities;
 
 namespace Recorder.ViewModel
 {
-    public class ViewModel : INotifyPropertyChanged
+    public class ViewModel : ViewModelBase
     {
-        private IKinectMediator _kinect;
+        private readonly IKinectMediator _kinect;
+        private readonly IWindowService _windowService;
+        private readonly IMessageBoxService _messageService;
 
-        public ViewModel()
+        public ViewModel(IWindowService windowService, IMessageBoxService messageService)
         {
-            //_kinect = new KinectMediator(OnPreviewImageChanged);
-            _kinect = new FakeKinectMediator(OnPreviewImageChanged); // When without a device.
+            try
+            {
+                _kinect = new KinectMediator(OnPreviewImageChanged);
+            }
+            catch (NullReferenceException)
+            {
+                _kinect = new FakeKinectMediator(OnPreviewImageChanged); // When without a device.
+            }
+            _windowService = windowService;
+            _messageService = messageService;
             //_kinect.ActionsOnPreviewFrameReady.Add(OnPreviewImageChanged);
             //if (_recorder.State == RecorderStates.Ready)
-                //_recorder.StartPreview();
+            //    _recorder.StartPreview();
         }
 
         #region Binded properties.
@@ -35,16 +46,6 @@ namespace Recorder.ViewModel
 
         #region Property changed notification.
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void _onPropertyChanged(params string[] propertyNames)
-        {
-            if (PropertyChanged != null)
-            {
-                foreach (string name in propertyNames)
-                    PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
-        }
-        
         public void OnPreviewImageChanged()
         {
             _onPropertyChanged(nameof(RecordedImage));
@@ -90,6 +91,36 @@ namespace Recorder.ViewModel
                 return _stopRecording;
             }
 
+        }
+
+        /// <summary>
+        /// Gets the open window command
+        /// </summary>
+        public ICommand OpenWindowCommand
+        {
+            get
+            {
+                return new RelayCommand(
+                    o =>
+                    {
+                        this._windowService.OpenWindow<SettingsViewModel>("SettingsWindow");
+                    });
+            }
+        }
+
+        /// <summary>
+        /// Gets the open dialog command
+        /// </summary>
+        public ICommand OpenDialogCommand
+        {
+            get
+            {
+                return new RelayCommand(
+                    o =>
+                    {
+                        this._windowService.OpenDialog<SettingsViewModel>("SettingsWindow");
+                    });
+            }
         }
 
         #endregion

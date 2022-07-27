@@ -6,7 +6,7 @@ namespace Utilities
 {
     public static class Functions
     {
-        private const string _dll = "KinectPCLLib.dll";
+        private const string _dll = "RecorderDll.dll";
 
         /// <summary>
         /// Saves PointCloudData obtained from Kinect sensor to file.

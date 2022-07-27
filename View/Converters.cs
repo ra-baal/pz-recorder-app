@@ -33,24 +33,14 @@ namespace Recorder.View
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string state = (string) value;
-            switch (state)
+            _brush = state switch
             {
-                case "NoSensor":
-                    _brush = Brushes.DimGray;
-                    break;
-                case "Ready":
-                    _brush = Brushes.LightGray;
-                    break;
-                case "Preview":
-                    _brush = Brushes.GreenYellow;
-                    break;
-                case "Recording":
-                    _brush = Brushes.Red;
-                    break;
-                default: // Unknown recorder state;
-                    _brush = Brushes.Black;
-                    break;
-            }
+                "NoSensor" => Brushes.DimGray,
+                "Ready" => Brushes.LightGray,
+                "Preview" => Brushes.GreenYellow,
+                "Recording" => Brushes.Red,
+                _ => Brushes.Black
+            };
 
             return _brush;
         }
