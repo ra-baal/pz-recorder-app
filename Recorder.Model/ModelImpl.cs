@@ -26,7 +26,7 @@ namespace Recorder.Model
 
         RecorderState IModel.State => base.GetStates()[1];
 
-        WriteableBitmap IModel.ColorBitmap => base.GetColorBitmap();
+        WriteableBitmap[] IModel.ColorBitmaps => base.GetColorBitmaps();
 
         void IModel.PreviewMode() => base.PreviewMode();
 

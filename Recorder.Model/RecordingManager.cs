@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
 {
-    public unsafe class RecordingManager : IRecordingManager
+    public unsafe class RecordingManager : IRecordingManager, IDisposable
     {
         #region DllImport.
         private const string _dll = "RecorderDll.dll";
@@ -14,15 +14,17 @@ namespace Recorder.Model
         [DllImport(_dll)] private static extern void* RecordingManager_New();
         [DllImport(_dll)] private static extern void RecordingManager_Delete(void* recordingManager);
         [DllImport(_dll)] private static extern int RecordingManager_GetRecordersNumber(void* recordingManager);
-        [DllImport(_dll)] private static extern Colors RecordingManager_GetColorBitmap(void* recordingManager);
-        [DllImport(_dll)] private static extern void RecordingManager_RecordingMode(void* recordingManager);
-        [DllImport(_dll)] private static extern void RecordingManager_PreviewMode(void* recordingManager);
+        [DllImport(_dll)] private static extern Colors* RecordingManager_GetColorBitmaps(void* recordingManager);
+        [DllImport(_dll)] private static extern void RecordingManager_StartRecording(void* recordingManager);
+        [DllImport(_dll)] private static extern void RecordingManager_StopRecording(void* recordingManager);
         #endregion
 
         #region Handlers.
 
         private void* _objptr;
-        private WriteableBitmap _colorBitmap;
+        private bool _disposedValue;
+        private WriteableBitmap _colorBitmap0;
+        private WriteableBitmap _colorBitmap1;
 
         public RecordingManager()
         {
@@ -31,48 +33,27 @@ namespace Recorder.Model
             if (_objptr == null)
                 throw new ExternalException();
 
-            _colorBitmap = null;
+            _disposedValue = false;
+
+            _colorBitmap0 = null;
+            _colorBitmap1 = null;
+
         }
 
         public int GetRecordersNumber() => RecordingManager_GetRecordersNumber(_objptr);
 
-        // Ten kod też działa.
-        //public (byte b, byte g, byte r)[] GetColorBitmap()
-        //{
-        //    Colors colors = RecordingManager_GetColorBitmap(_objptr);
-
-        //    (byte b, byte g, byte r)[] bitmap = new (byte r, byte g, byte b)[colors.Heigth * colors.Width];
-
-        //    RGBQUAD* rgbquadPtr = colors.Data;
-        //    for (int i = 0; i < colors.Width * colors.Heigth; i++)
-        //    {
-        //        byte* bytePtr = (byte*)rgbquadPtr; // RGBQUAD.rgbBlue
-        //        bitmap[i].b = *bytePtr;
-
-        //        bytePtr++; // RGBQUAD.rgbGreen
-        //        bitmap[i].g = *bytePtr;
-
-        //        bytePtr++; // RGBQUAD.rgbRed
-        //        bitmap[i].r = *bytePtr;
-
-        //        bytePtr++; // RGBQUAD.rgbReserved
-
-        //        rgbquadPtr++; // Następne 4 bajty
-        //    }
-
-        //    return bitmap;
-        //}
-
-        public WriteableBitmap GetColorBitmap()
+        public WriteableBitmap[] GetColorBitmaps()
         {
-            Colors colors = RecordingManager_GetColorBitmap(_objptr);
+
+            Colors* colors = RecordingManager_GetColorBitmaps(_objptr);
 
             double dpi = 96.0; // Wartość z ColorBasics-WPF.
 
-            if (_colorBitmap == null)
-                _colorBitmap = new WriteableBitmap(
-                    colors.Width,
-                    colors.Heigth,
+            /// 0 ///
+            if (_colorBitmap0 == null)
+                _colorBitmap0 = new WriteableBitmap(
+                    colors[0].Width,
+                    colors[0].Heigth,
                     dpi,
                     dpi,
                     PixelFormats.Bgr32, // to samo co RGBQUAD
@@ -89,25 +70,109 @@ namespace Recorder.Model
             // (v2) 
             // - Tutaj można by pewnie użyć jakiejś funkcji kopiującej cały ciąg pamięci.
             // - Tablica jeśli już musi być, to powinna być polem.
-            byte[] colorPixels = new byte[colors.Width*colors.Heigth*4];
-            for (int i = 0; i < colorPixels.Length; i++)
-                colorPixels[i] = *(((byte*)colors.Data)+i);
-            
-            _colorBitmap.WritePixels(
-                        new Int32Rect(0, 0, _colorBitmap.PixelWidth, _colorBitmap.PixelHeight),
-                        colorPixels,
-                        _colorBitmap.PixelWidth * sizeof(int),
+            byte[] colorPixels0 = new byte[colors[0].Width * colors[0].Heigth * 4];
+
+
+            try
+            {
+                for (int i = 0; i < colorPixels0.Length; i++)
+                {
+                    colorPixels0[i] = *(((byte*)colors[0].Data) + i);
+                }
+            }
+            catch (Exception e)
+            {
+                // pass
+            }
+
+            _colorBitmap0.WritePixels(
+                        new Int32Rect(0, 0, _colorBitmap0.PixelWidth, _colorBitmap0.PixelHeight),
+                        colorPixels0,
+                        _colorBitmap0.PixelWidth * sizeof(int),
                         0);
 
-            return _colorBitmap;
+
+            /// 1 ///
+            if (_colorBitmap1 == null)
+                _colorBitmap1 = new WriteableBitmap(
+                    colors[1].Width,
+                    colors[1].Heigth,
+                    dpi,
+                    dpi,
+                    PixelFormats.Bgr32, // to samo co RGBQUAD
+                    null);
+
+            byte[] colorPixels1 = new byte[colors[1].Width * colors[1].Heigth * 4];
+
+            try
+            {
+                for (int i = 0; i < colorPixels1.Length; i++)
+                {
+                    colorPixels1[i] = *(((byte*)colors[1].Data) + i);
+                }
+            }
+            catch (Exception e)
+            {
+                // pass
+            }
+
+            _colorBitmap1.WritePixels(
+                        new Int32Rect(0, 0, _colorBitmap1.PixelWidth, _colorBitmap1.PixelHeight),
+                        colorPixels1,
+                        _colorBitmap1.PixelWidth * sizeof(int),
+                        0);
+
+
+
+            return new WriteableBitmap[]
+            {
+                _colorBitmap0,
+                _colorBitmap1
+            };
         }
 
-        public void RecordingMode() => RecordingManager_RecordingMode(_objptr);
+        public void RecordingMode() => RecordingManager_StartRecording(_objptr);
 
-        public void PreviewMode() => RecordingManager_PreviewMode(_objptr);
+        public void PreviewMode() => RecordingManager_StopRecording(_objptr);
 
         // atrapa
         public RecorderState[] GetStates() => new RecorderState[] { RecorderState.NoSensor, RecorderState.Ready };
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // free unmanaged resources (unmanaged objects) and override finalizer
+                RecordingManager_Delete(_objptr);
+                _objptr = null;
+
+                // set large fields to null
+                _colorBitmap0 = null;
+                _colorBitmap1 = null;
+
+                _disposedValue = true;
+            }
+        }
+
+        // override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        ~RecordingManager()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
 

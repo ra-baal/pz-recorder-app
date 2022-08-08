@@ -35,7 +35,7 @@ namespace Recorder.ViewModel
 
         public string RecorderState => _model.State.ToString();
 
-        public WriteableBitmap RecordedImage => _model.ColorBitmap;
+        public WriteableBitmap RecordedImage => _model.ColorBitmaps[0];
 
         #endregion
 
