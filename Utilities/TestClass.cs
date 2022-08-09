@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Utilities
 {
+    [Obsolete]
     public unsafe class TestClass
     {
         #region DllImport.

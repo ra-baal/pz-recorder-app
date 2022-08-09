@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Utilities
 {
+    [Obsolete]
     public static class Functions
     {
         private const string _dll = "RecorderDll.dll";

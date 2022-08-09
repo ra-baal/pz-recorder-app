@@ -23,8 +23,11 @@ namespace Recorder.Model
 
         private void* _objptr;
         private bool _disposedValue;
-        private WriteableBitmap _colorBitmap0;
-        private WriteableBitmap _colorBitmap1;
+        private WriteableBitmap[] _colorBitmaps;
+        //private WriteableBitmap _colorBitmap1;
+
+        private const double _dpi = 96.0; // Wartość z projektu Kinect SDK ColorBasics-WPF.
+
 
         public RecordingManager()
         {
@@ -35,8 +38,11 @@ namespace Recorder.Model
 
             _disposedValue = false;
 
-            _colorBitmap0 = null;
-            _colorBitmap1 = null;
+            _colorBitmaps = new WriteableBitmap[2]
+            {
+                null,
+                null
+            };
 
         }
 
@@ -44,22 +50,8 @@ namespace Recorder.Model
 
         public WriteableBitmap[] GetColorBitmaps()
         {
-
-            Colors* colors = RecordingManager_GetColorBitmaps(_objptr);
-
-            double dpi = 96.0; // Wartość z ColorBasics-WPF.
-
-            /// 0 ///
-            if (_colorBitmap0 == null)
-                _colorBitmap0 = new WriteableBitmap(
-                    colors[0].Width,
-                    colors[0].Heigth,
-                    dpi,
-                    dpi,
-                    PixelFormats.Bgr32, // to samo co RGBQUAD
-                    null);
-
-            // (v1) 
+            // ToDo: lepsza konwersja/kopiowanie colors -> WriteableBitmap
+            // (wer 1) 
             // nie działa - Jak by tu zrobić bez pośredniej tablicy bajtów?
             //colorBitmap.WritePixels(
             //            new Int32Rect(0, 0, colorBitmap.PixelWidth, colorBitmap.PixelHeight),
@@ -67,68 +59,63 @@ namespace Recorder.Model
             //            colorBitmap.PixelWidth * sizeof(int),
             //            0);
 
-            // (v2) 
+            // (wer 2) 
             // - Tutaj można by pewnie użyć jakiejś funkcji kopiującej cały ciąg pamięci.
             // - Tablica jeśli już musi być, to powinna być polem.
-            byte[] colorPixels0 = new byte[colors[0].Width * colors[0].Heigth * 4];
 
+            Colors* colors = RecordingManager_GetColorBitmaps(_objptr);
 
-            try
+            // kinect v1
+            colorsToBgrBitmap(colors, 0);
+
+            // kinect v2
+            colorsToBgrBitmap(colors, 1);
+
+            return _colorBitmaps;
+        }
+
+        private void colorsToBgrBitmap(Colors* colorsArray, int recorder_bitmap)
+        {
+            Colors colors = colorsArray[recorder_bitmap];
+            System.Windows.Media.PixelFormat format;
+            int bytesPerPixel;
+
+            switch (colors.Format)
             {
-                for (int i = 0; i < colorPixels0.Length; i++)
-                {
-                    colorPixels0[i] = *(((byte*)colors[0].Data) + i);
-                }
+                case PixelFormat.UnknownFormat:
+                    throw new ArgumentException("Nieznany format piksela");
+                case PixelFormat.RGB_888:
+                    format = PixelFormats.Rgb24;
+                    bytesPerPixel = 3;
+                    break;
+                case PixelFormat.BGR32:
+                    format = PixelFormats.Bgr32;
+                    bytesPerPixel = 4;
+                    break;
+                default:
+                    throw new ArgumentException("Nieobsługiwany format piksela");
             }
-            catch (Exception e)
-            {
-                // pass
-            }
 
-            _colorBitmap0.WritePixels(
-                        new Int32Rect(0, 0, _colorBitmap0.PixelWidth, _colorBitmap0.PixelHeight),
-                        colorPixels0,
-                        _colorBitmap0.PixelWidth * sizeof(int),
-                        0);
-
-
-            /// 1 ///
-            if (_colorBitmap1 == null)
-                _colorBitmap1 = new WriteableBitmap(
-                    colors[1].Width,
-                    colors[1].Heigth,
-                    dpi,
-                    dpi,
-                    PixelFormats.Bgr32, // to samo co RGBQUAD
+            if (_colorBitmaps[recorder_bitmap] == null)
+                _colorBitmaps[recorder_bitmap] = new WriteableBitmap(
+                    colors.Width,
+                    colors.Height,
+                    _dpi,
+                    _dpi,
+                    format,
                     null);
 
-            byte[] colorPixels1 = new byte[colors[1].Width * colors[1].Heigth * 4];
+            byte[] colorPixels0 = new byte[colors.Width * colors.Height * bytesPerPixel];
 
-            try
-            {
-                for (int i = 0; i < colorPixels1.Length; i++)
-                {
-                    colorPixels1[i] = *(((byte*)colors[1].Data) + i);
-                }
-            }
-            catch (Exception e)
-            {
-                // pass
-            }
+            for (int i = 0; i < colorPixels0.Length; i++)
+                colorPixels0[i] = *(((byte*)colors.Data) + i);
 
-            _colorBitmap1.WritePixels(
-                        new Int32Rect(0, 0, _colorBitmap1.PixelWidth, _colorBitmap1.PixelHeight),
-                        colorPixels1,
-                        _colorBitmap1.PixelWidth * sizeof(int),
-                        0);
+            _colorBitmaps[recorder_bitmap].WritePixels(
+                new Int32Rect(0, 0, _colorBitmaps[recorder_bitmap].PixelWidth, _colorBitmaps[recorder_bitmap].PixelHeight),
+                colorPixels0,
+                _colorBitmaps[recorder_bitmap].PixelWidth * bytesPerPixel,
+                0);
 
-
-
-            return new WriteableBitmap[]
-            {
-                _colorBitmap0,
-                _colorBitmap1
-            };
         }
 
         public void RecordingMode() => RecordingManager_StartRecording(_objptr);
@@ -153,8 +140,7 @@ namespace Recorder.Model
                 _objptr = null;
 
                 // set large fields to null
-                _colorBitmap0 = null;
-                _colorBitmap1 = null;
+                _colorBitmaps = null;
 
                 _disposedValue = true;
             }
