@@ -10,6 +10,8 @@
     <RootNamespace>Recorder.Model</RootNamespace>
     <AssemblyName>Recorder.Model</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -50,6 +52,7 @@
     <Compile Include="FakeModel.cs" />
     <Compile Include="ModelImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecorderSettings.cs" />
     <Compile Include="RecorderState.cs" />
     <Compile Include="RecordingManager.cs" />
     <Compile Include="Structs.cs" />

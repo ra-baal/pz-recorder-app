@@ -14,6 +14,5 @@ namespace Recorder.Model
         //(byte b, byte g, byte r)[] GetColorBitmap();
         void RecordingMode();
         void PreviewMode();
-
     }
 }

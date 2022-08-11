@@ -9,25 +9,25 @@
         ResizeMode="NoResize">
     <DockPanel LastChildFill="False">
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-            <Label Content="_Directory name:" Target="{Binding ElementName=dirName}" DockPanel.Dock="top"></Label>
+            <Label Content="_Nazwa katalogu:" Target="{Binding ElementName=dirName}" DockPanel.Dock="top"></Label>
             <TextBox Name="dirName" Width="150" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Text="{Binding DirectoryName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-            <Label Content="_File prefix:" Target="{Binding ElementName=filePrefix}" DockPanel.Dock="top"></Label>
+            <Label Content="_Przedrostek pliku:" Target="{Binding ElementName=filePrefix}" DockPanel.Dock="top"></Label>
             <TextBox Name="filePrefix" Width="150" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Text="{Binding FilePrefix, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
             <DockPanel DockPanel.Dock="Left" LastChildFill="False">
-                <Label Content="_Path:" Target="{Binding ElementName=path}" DockPanel.Dock="top"></Label>
+                <Label Content="_Ścieżka:" Target="{Binding ElementName=path}" DockPanel.Dock="top"></Label>
                 <TextBox Name="path" Width="300" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Text="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
-                <Button Width="85" Margin="10,0,0,0" Content="Browse" Command="{Binding OpenFolderDialog}" CommandParameter="{Binding ElementName=path}"></Button>
+                <Button Width="85" Margin="10,0,0,0" Content="Przeglądaj" Command="{Binding OpenFolderDialog}" CommandParameter="{Binding ElementName=path}"></Button>
             </DockPanel>
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
-            <Button Height="30" Width="70" DockPanel.Dock="Right" Content="Save" Margin="10" Command="{Binding Save}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"></Button>
-            <Button Height="30" Width="70" DockPanel.Dock="Right" Content="Cancel" Margin="10" Command="{Binding Close}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"></Button>
+            <Button Height="30" Width="70" DockPanel.Dock="Right" Content="Zapisz" Margin="10" Command="{Binding Save}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"></Button>
+            <Button Height="30" Width="70" DockPanel.Dock="Right" Content="Anuluj" Margin="10" Command="{Binding Close}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"></Button>
         </DockPanel>
     </DockPanel>
 </local:WindowView>

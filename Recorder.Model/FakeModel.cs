@@ -20,6 +20,9 @@ namespace Recorder.Model
 
         void IModel.RecordingMode() { /*pass*/ }
 
+        public string DirectoryPrefix { get; set; }
+        public string FilePrefix { get; set; }
+        public string Path { get; set; }
 
     }
 }

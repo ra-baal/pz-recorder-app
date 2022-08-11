@@ -13,5 +13,9 @@ namespace Recorder.Model
         WriteableBitmap ColorBitmap { get; }
         void RecordingMode();
         void PreviewMode();
+
+        string DirectoryPrefix { get; set; }
+        string FilePrefix { get; set; }
+        string Path { get; set; }
     }
 }

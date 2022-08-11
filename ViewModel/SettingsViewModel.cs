@@ -13,20 +13,20 @@ namespace Recorder.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private readonly IKinectCloudRecorder _model;
+        private readonly IModel _model;
         private readonly IWindowService _windowService;
         private readonly IMessageBoxService _messageService;
 
-        public SettingsViewModel(IKinectCloudRecorder model, IWindowService windowService, IMessageBoxService messageService)
+        public SettingsViewModel(ModelImpl model, IWindowService windowService, IMessageBoxService messageService)
         {
             _model = model;
             _windowService = windowService;
             _messageService = messageService;
         }
 
-        private string _tmpDirectoryName;
-        private string _tmpFilePrefix;
-        private string _tmpPath;
+        private string? _tmpDirectoryName;
+        private string? _tmpFilePrefix;
+        private string? _tmpPath;
 
         public string DirectoryName
         {
@@ -46,9 +46,9 @@ namespace Recorder.ViewModel
             set => _tmpPath = value;
         }
 
-        private ICommand _openFolderDialog;
-        private ICommand _save;
-        private ICommand _close;
+        private ICommand? _openFolderDialog;
+        private ICommand? _save;
+        private ICommand? _close;
 
         public ICommand OpenFolderDialog
         {
@@ -72,9 +72,9 @@ namespace Recorder.ViewModel
             {
                 return _save ??= new RelayCommand(o =>
                 {
-                    _model.DirectoryPrefix = _tmpDirectoryName;
-                    _model.FilePrefix = _tmpFilePrefix;
-                    _model.Path = _tmpPath;
+                    if (_tmpDirectoryName != null) _model.DirectoryPrefix = _tmpDirectoryName;
+                    if (_tmpFilePrefix != null) _model.FilePrefix = _tmpFilePrefix;
+                    if (_tmpPath != null) _model.Path = _tmpPath;
                     _onPropertyChanged(nameof(DirectoryName), nameof(FilePrefix), nameof(Path));
                     if (o is Window w) w.Close();
                 });

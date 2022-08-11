@@ -10,11 +10,11 @@ namespace Recorder.ViewModel
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void _onPropertyChanged(params string[] propertyNames)
         {
             if (PropertyChanged == null) return;
-            foreach (string name in propertyNames)
+            foreach (var name in propertyNames)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 

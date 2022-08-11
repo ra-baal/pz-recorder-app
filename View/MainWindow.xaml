@@ -8,7 +8,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Recorder" 
-        Height="500" Width="800"
+        Height="800" Width="1200"
         MinHeight="400" MinWidth="700"
         Margin="0">
 
@@ -27,24 +27,42 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid>
+    <Grid x:Name="Grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Viewbox Grid.Row="0" Stretch="Uniform" HorizontalAlignment="Center">
+        <!--<Viewbox Grid.Row="0" Stretch="Uniform" HorizontalAlignment="Center" x:Name="VBox" >-->
             <!--<Image Name="Image" Width="640" Height="480">
                 <Image.Source>
                     <BitmapImage DecodePixelWidth="200"  
                                  UriSource="C:\Users\balce\source\ProgramowanieZespolowe\RecorderTest\View\testowyobraz.jpg" />
                 </Image.Source>
             </Image>-->
-            <Border BorderThickness="5" BorderBrush="{Binding RecorderState, Mode=OneWay, Converter={StaticResource state2brush}}">
+            <!--<Border BorderThickness="5" BorderBrush="{Binding RecorderState, Mode=OneWay, Converter={StaticResource state2brush}}">
                 <Image Width="640" Height="480" Source="{Binding Path=RecordedImage, Mode=OneWay}"/>
-            </Border>
-        </Viewbox>
+            </Border>-->
+        <!--</Viewbox>-->
+        <StackPanel Grid.Row="0" VerticalAlignment="Center" x:Name="Panel">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding RecorderData}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Height="400" BorderThickness="5" BorderBrush="{Binding [0], Mode=OneWay, Converter={StaticResource state2brush}}">
+                                <Image Source="{Binding [1], Mode=OneWay}"></Image>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
 
         <DockPanel Grid.Row="1">
             <Button
@@ -75,7 +93,7 @@
                    BorderBrush="DarkGray" BorderThickness="1">
             <StatusBarItem Padding="10 2 10 2">
                 <TextBlock Name="statusBarText" Margin="-1 0 0 0" 
-                           Text="{Binding Path=RecorderState, Mode=OneWay}" />
+                           Text="{Binding Path=GeneralState, Mode=OneWay}" />
             </StatusBarItem>
         </StatusBar>
 

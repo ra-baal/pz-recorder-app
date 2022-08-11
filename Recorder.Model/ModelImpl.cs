@@ -15,7 +15,7 @@ namespace Recorder.Model
 
         void IModel.SetOnPreviewImageChanged(Action onPreviewImageChanged)
         {
-            int previewRefreshing = 200;
+            const int previewRefreshing = 200;
 
             _timer = new Timer((e) =>
             {
@@ -31,7 +31,5 @@ namespace Recorder.Model
         void IModel.PreviewMode() => base.PreviewMode();
 
         void IModel.RecordingMode() => base.RecordingMode();
-
-
     }
 }

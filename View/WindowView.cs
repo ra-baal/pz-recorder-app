@@ -21,7 +21,7 @@ namespace Recorder.View
         /// </param>
         public void Initialize(ViewModelBase viewModel)
         {
-            this.DataContext = viewModel;
+            DataContext = viewModel;
         }
 
         /// <summary>

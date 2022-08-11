@@ -9,15 +9,12 @@ using System.Windows.Input;
 
 class RelayCommand : ICommand
 {
-    private Action<object> execute;
-    private Func<object, bool> canExecute;
+    private readonly Action<object> execute;
+    private readonly Func<object, bool>? canExecute;
 
     public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
     {
-        if (execute == null)
-            throw new ArgumentNullException(nameof(execute));
-        
-        this.execute = execute;
+        this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
         this.canExecute = canExecute;
     }
 
@@ -30,10 +27,7 @@ class RelayCommand : ICommand
 
     public bool CanExecute(object parameter)
     {
-        if (canExecute == null)
-            return true;
-
-        return canExecute(parameter);
+        return canExecute == null || canExecute(parameter);
     }
 
     public void Execute(object parameter)

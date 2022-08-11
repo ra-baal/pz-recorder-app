@@ -29,7 +29,7 @@ namespace Recorder.View
 
     class StateToBrushConverter : IValueConverter
     {
-        private SolidColorBrush _brush = new SolidColorBrush();
+        private SolidColorBrush _brush = new();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string state = (string) value;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Recorder.Model;
@@ -8,7 +10,7 @@ namespace Recorder.ViewModel
 {
     public class ViewModel : ViewModelBase
     {
-        private readonly IModel _model;
+        private readonly List<IModel> _model = new();
         private readonly IWindowService _windowService;
         private readonly IMessageBoxService _messageService;
 
@@ -16,12 +18,15 @@ namespace Recorder.ViewModel
         {
             try
             {
-                _model = new ModelImpl();
-                _model.SetOnPreviewImageChanged(OnPreviewImageChanged);
+                throw new NotImplementedException();
+                _model?.Add(new ModelImpl());
+                _model?.ForEach(m => m.SetOnPreviewImageChanged(OnPreviewImageChanged));
             }
             catch (Exception)
             {
-                _model = new FakeModel(); // When without a device.
+                _model?.Add(new FakeModel()); // When without a device.
+                _model?.Add(new FakeModel());
+                _model?.Add(new FakeModel());
             }
 
             _windowService = windowService;
@@ -33,9 +38,14 @@ namespace Recorder.ViewModel
 
         #region Binded properties.
 
-        public string RecorderState => _model.State.ToString();
+        public List<List<object>> RecorderData =>
+            RecorderState.Zip(RecordedImage, (k, v) => new List<object>{k, v}).ToList();
 
-        public WriteableBitmap RecordedImage => _model.ColorBitmap;
+        public string GeneralState => _model.Select(m => m.State).Distinct().Min().ToString();
+
+        public List<string> RecorderState => _model.Select(m => m.State.ToString()).ToList();
+
+        public List<WriteableBitmap> RecordedImage => _model.Select(m => m.ColorBitmap).ToList();
 
         #endregion
 
@@ -50,40 +60,34 @@ namespace Recorder.ViewModel
 
         #region Commands.
 
-        private ICommand _startRecording;
+        private ICommand? _startRecording;
         public ICommand StartRecording
         {
             get
             {
-                if (_startRecording == null)
-                    _startRecording = new RelayCommand(
-                        o =>
-                        {
-                            _model.RecordingMode();
-                            _onPropertyChanged(nameof(RecorderState));
-                        },
-                        o => _model.State == Model.RecorderState.Ready || _model.State == Model.RecorderState.Preview);
-                
-                return _startRecording;
+                return _startRecording ??= new RelayCommand(
+                    o =>
+                    {
+                        _model.ForEach(m => m.RecordingMode());
+                        _onPropertyChanged(nameof(RecorderState));
+                    },
+                    o => _model.All(m => m.State is Model.RecorderState.Ready or Model.RecorderState.Preview));
             }
 
         }
 
-        private ICommand _stopRecording;
+        private ICommand? _stopRecording;
         public ICommand StopRecording
         {
             get
             {
-                if (_stopRecording == null)
-                    _stopRecording = new RelayCommand(
-                        o =>
-                        {
-                            _model.PreviewMode(); 
-                            _onPropertyChanged(nameof(RecorderState));
-                        },
-                        o => _model.State == Model.RecorderState.Recording);
-
-                return _stopRecording;
+                return _stopRecording ??= new RelayCommand(
+                    o =>
+                    {
+                        _model.ForEach(m => m.PreviewMode());
+                        _onPropertyChanged(nameof(RecorderState));
+                    },
+                    o => _model.All(m => m.State == Model.RecorderState.Recording));
             }
 
         }

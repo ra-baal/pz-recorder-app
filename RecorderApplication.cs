@@ -29,7 +29,7 @@ namespace Recorder
         /// <summary>
         /// Gets the current application instance
         /// </summary>
-        public static RecorderApplication Current => _current ?? (_current = new RecorderApplication());
+        public static RecorderApplication Current => _current ??= new RecorderApplication();
 
         /// <summary>
         /// Prevents creation of RecorderApplication instances

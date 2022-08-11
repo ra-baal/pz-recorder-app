@@ -21,8 +21,8 @@ namespace Recorder.Model
 
         #region Handlers.
 
-        private void* _objptr;
-        private WriteableBitmap _colorBitmap;
+        private readonly void* _objptr;
+        private WriteableBitmap? _colorBitmap;
 
         public RecordingManager()
         {
@@ -67,16 +67,15 @@ namespace Recorder.Model
         {
             Colors colors = RecordingManager_GetColorBitmap(_objptr);
 
-            double dpi = 96.0; // Wartość z ColorBasics-WPF.
+            const double dpi = 96.0; // Wartość z ColorBasics-WPF.
 
-            if (_colorBitmap == null)
-                _colorBitmap = new WriteableBitmap(
-                    colors.Width,
-                    colors.Heigth,
-                    dpi,
-                    dpi,
-                    PixelFormats.Bgr32, // to samo co RGBQUAD
-                    null);
+            _colorBitmap ??= new WriteableBitmap(
+                colors.Width,
+                colors.Heigth,
+                dpi,
+                dpi,
+                PixelFormats.Bgr32, // to samo co RGBQUAD
+                null);
 
             // (v1) 
             // nie działa - Jak by tu zrobić bez pośredniej tablicy bajtów?
@@ -110,8 +109,23 @@ namespace Recorder.Model
         public RecorderState[] GetStates() => new RecorderState[] { RecorderState.NoSensor, RecorderState.Ready };
 
         #endregion
+        public string DirectoryPrefix
+        {
+            get => RecorderSettings._dirprefix;
+            set => RecorderSettings._dirprefix = value;
+        }
 
+        public string FilePrefix
+        {
+            get => RecorderSettings._fileprefix;
+            set => RecorderSettings._fileprefix = value;
+        }
 
+        public string Path
+        {
+            get => RecorderSettings._path;
+            set => RecorderSettings._path = value;
+        }
     }
 
 }
