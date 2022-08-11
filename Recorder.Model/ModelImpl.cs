@@ -13,6 +13,8 @@ namespace Recorder.Model
     {
         private Timer _timer;
 
+        private RecorderState _state = RecorderState.Ready;
+
         void IModel.SetOnPreviewImageChanged(Action onPreviewImageChanged)
         {
             const int previewRefreshing = 200;
@@ -24,12 +26,22 @@ namespace Recorder.Model
             null, TimeSpan.Zero, TimeSpan.FromMilliseconds(previewRefreshing));
         }
 
-        RecorderState IModel.State => base.GetStates()[1];
+        RecorderState IModel.State => _state;
 
-        WriteableBitmap IModel.ColorBitmap => base.GetColorBitmap();
+        WriteableBitmap[] IModel.ColorBitmaps => base.GetColorBitmaps();
 
-        void IModel.PreviewMode() => base.PreviewMode();
+        void IModel.PreviewMode()
+        {
+            _state = RecorderState.Preview;
+            base.PreviewMode();
+        }
 
-        void IModel.RecordingMode() => base.RecordingMode();
+        void IModel.RecordingMode()
+        {
+            _state = RecorderState.Recording;
+            base.RecordingMode();
+        }
+
+
     }
 }

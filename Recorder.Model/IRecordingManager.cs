@@ -10,7 +10,7 @@ namespace Recorder.Model
     {
         int GetRecordersNumber();
         RecorderState[] GetStates();
-        WriteableBitmap GetColorBitmap();
+        WriteableBitmap[] GetColorBitmaps();
         //(byte b, byte g, byte r)[] GetColorBitmap();
         void RecordingMode();
         void PreviewMode();

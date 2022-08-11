@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
 {
-    public unsafe class RecordingManager : IRecordingManager
+    public unsafe class RecordingManager : IRecordingManager, IDisposable
     {
         #region DllImport.
         private const string _dll = "RecorderDll.dll";
@@ -14,15 +14,20 @@ namespace Recorder.Model
         [DllImport(_dll)] private static extern void* RecordingManager_New();
         [DllImport(_dll)] private static extern void RecordingManager_Delete(void* recordingManager);
         [DllImport(_dll)] private static extern int RecordingManager_GetRecordersNumber(void* recordingManager);
-        [DllImport(_dll)] private static extern Colors RecordingManager_GetColorBitmap(void* recordingManager);
-        [DllImport(_dll)] private static extern void RecordingManager_RecordingMode(void* recordingManager);
-        [DllImport(_dll)] private static extern void RecordingManager_PreviewMode(void* recordingManager);
+        [DllImport(_dll)] private static extern Colors* RecordingManager_GetColorBitmaps(void* recordingManager);
+        [DllImport(_dll)] private static extern void RecordingManager_StartRecording(void* recordingManager);
+        [DllImport(_dll)] private static extern void RecordingManager_StopRecording(void* recordingManager);
         #endregion
 
         #region Handlers.
 
-        private readonly void* _objptr;
-        private WriteableBitmap? _colorBitmap;
+        private void* _objptr;
+        private bool _disposedValue;
+        private WriteableBitmap[] _colorBitmaps;
+        //private WriteableBitmap _colorBitmap1;
+
+        private const double _dpi = 96.0; // Wartość z projektu Kinect SDK ColorBasics-WPF.
+
 
         public RecordingManager()
         {
@@ -31,53 +36,22 @@ namespace Recorder.Model
             if (_objptr == null)
                 throw new ExternalException();
 
-            _colorBitmap = null;
+            _disposedValue = false;
+
+            _colorBitmaps = new WriteableBitmap[2]
+            {
+                null,
+                null
+            };
+
         }
 
         public int GetRecordersNumber() => RecordingManager_GetRecordersNumber(_objptr);
 
-        // Ten kod też działa.
-        //public (byte b, byte g, byte r)[] GetColorBitmap()
-        //{
-        //    Colors colors = RecordingManager_GetColorBitmap(_objptr);
-
-        //    (byte b, byte g, byte r)[] bitmap = new (byte r, byte g, byte b)[colors.Heigth * colors.Width];
-
-        //    RGBQUAD* rgbquadPtr = colors.Data;
-        //    for (int i = 0; i < colors.Width * colors.Heigth; i++)
-        //    {
-        //        byte* bytePtr = (byte*)rgbquadPtr; // RGBQUAD.rgbBlue
-        //        bitmap[i].b = *bytePtr;
-
-        //        bytePtr++; // RGBQUAD.rgbGreen
-        //        bitmap[i].g = *bytePtr;
-
-        //        bytePtr++; // RGBQUAD.rgbRed
-        //        bitmap[i].r = *bytePtr;
-
-        //        bytePtr++; // RGBQUAD.rgbReserved
-
-        //        rgbquadPtr++; // Następne 4 bajty
-        //    }
-
-        //    return bitmap;
-        //}
-
-        public WriteableBitmap GetColorBitmap()
+        public WriteableBitmap[] GetColorBitmaps()
         {
-            Colors colors = RecordingManager_GetColorBitmap(_objptr);
-
-            const double dpi = 96.0; // Wartość z ColorBasics-WPF.
-
-            _colorBitmap ??= new WriteableBitmap(
-                colors.Width,
-                colors.Heigth,
-                dpi,
-                dpi,
-                PixelFormats.Bgr32, // to samo co RGBQUAD
-                null);
-
-            // (v1) 
+            // ToDo: lepsza konwersja/kopiowanie colors -> WriteableBitmap
+            // (wer 1) 
             // nie działa - Jak by tu zrobić bez pośredniej tablicy bajtów?
             //colorBitmap.WritePixels(
             //            new Int32Rect(0, 0, colorBitmap.PixelWidth, colorBitmap.PixelHeight),
@@ -85,28 +59,106 @@ namespace Recorder.Model
             //            colorBitmap.PixelWidth * sizeof(int),
             //            0);
 
-            // (v2) 
+            // (wer 2) 
             // - Tutaj można by pewnie użyć jakiejś funkcji kopiującej cały ciąg pamięci.
             // - Tablica jeśli już musi być, to powinna być polem.
-            byte[] colorPixels = new byte[colors.Width*colors.Heigth*4];
-            for (int i = 0; i < colorPixels.Length; i++)
-                colorPixels[i] = *(((byte*)colors.Data)+i);
-            
-            _colorBitmap.WritePixels(
-                        new Int32Rect(0, 0, _colorBitmap.PixelWidth, _colorBitmap.PixelHeight),
-                        colorPixels,
-                        _colorBitmap.PixelWidth * sizeof(int),
-                        0);
 
-            return _colorBitmap;
+            Colors* colors = RecordingManager_GetColorBitmaps(_objptr);
+
+            // kinect v1
+            colorsToBgrBitmap(colors, 0);
+
+            // kinect v2
+            colorsToBgrBitmap(colors, 1);
+
+            return _colorBitmaps;
         }
 
-        public void RecordingMode() => RecordingManager_RecordingMode(_objptr);
+        private void colorsToBgrBitmap(Colors* colorsArray, int recorder_bitmap)
+        {
+            Colors colors = colorsArray[recorder_bitmap];
+            System.Windows.Media.PixelFormat format;
+            int bytesPerPixel;
 
-        public void PreviewMode() => RecordingManager_PreviewMode(_objptr);
+            switch (colors.Format)
+            {
+                case PixelFormat.UnknownFormat:
+                    throw new ArgumentException("Nieznany format piksela");
+                case PixelFormat.RGB_888:
+                    format = PixelFormats.Rgb24;
+                    bytesPerPixel = 3;
+                    break;
+                case PixelFormat.BGR32:
+                    format = PixelFormats.Bgr32;
+                    bytesPerPixel = 4;
+                    break;
+                default:
+                    throw new ArgumentException("Nieobsługiwany format piksela");
+            }
+
+            if (_colorBitmaps[recorder_bitmap] == null)
+                _colorBitmaps[recorder_bitmap] = new WriteableBitmap(
+                    colors.Width,
+                    colors.Height,
+                    _dpi,
+                    _dpi,
+                    format,
+                    null);
+
+            byte[] colorPixels0 = new byte[colors.Width * colors.Height * bytesPerPixel];
+
+            for (int i = 0; i < colorPixels0.Length; i++)
+                colorPixels0[i] = *(((byte*)colors.Data) + i);
+
+            _colorBitmaps[recorder_bitmap].WritePixels(
+                new Int32Rect(0, 0, _colorBitmaps[recorder_bitmap].PixelWidth, _colorBitmaps[recorder_bitmap].PixelHeight),
+                colorPixels0,
+                _colorBitmaps[recorder_bitmap].PixelWidth * bytesPerPixel,
+                0);
+
+        }
+
+        public void RecordingMode() => RecordingManager_StartRecording(_objptr);
+
+        public void PreviewMode() => RecordingManager_StopRecording(_objptr);
 
         // atrapa
         public RecorderState[] GetStates() => new RecorderState[] { RecorderState.NoSensor, RecorderState.Ready };
+
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // free unmanaged resources (unmanaged objects) and override finalizer
+                RecordingManager_Delete(_objptr);
+                _objptr = null;
+
+                // set large fields to null
+                _colorBitmaps = null;
+
+                _disposedValue = true;
+            }
+        }
+
+        // override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        ~RecordingManager()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         #endregion
         public string DirectoryPrefix

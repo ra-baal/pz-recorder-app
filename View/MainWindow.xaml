@@ -56,7 +56,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Height="400" BorderThickness="5" BorderBrush="{Binding [0], Mode=OneWay, Converter={StaticResource state2brush}}">
-                                <Image Source="{Binding [1], Mode=OneWay}"></Image>
+                                <Image Source="{Binding [1][0], Mode=OneWay}"></Image> 
+                                <!--TODO: Usunąć drugi indeks w Image po dostosowaniu-->
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

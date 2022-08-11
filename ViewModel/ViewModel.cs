@@ -14,6 +14,7 @@ namespace Recorder.ViewModel
         private readonly IWindowService _windowService;
         private readonly IMessageBoxService _messageService;
 
+        // TODO: Może wstrzyknąć modelom Bitmapy zamiast trzymać tablicę w menedżerze
         public ViewModel(IWindowService windowService, IMessageBoxService messageService)
         {
             try
@@ -45,7 +46,7 @@ namespace Recorder.ViewModel
 
         public List<string> RecorderState => _model.Select(m => m.State.ToString()).ToList();
 
-        public List<WriteableBitmap> RecordedImage => _model.Select(m => m.ColorBitmap).ToList();
+        public List<WriteableBitmap[]> RecordedImage => _model.Select(m => m.ColorBitmaps).ToList();
 
         #endregion
 

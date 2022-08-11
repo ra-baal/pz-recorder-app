@@ -10,7 +10,7 @@ namespace Recorder.Model
     {
         void SetOnPreviewImageChanged(Action onPreviewImageChanged);
         RecorderState State { get; }
-        WriteableBitmap ColorBitmap { get; }
+        WriteableBitmap[] ColorBitmaps { get; }
         void RecordingMode();
         void PreviewMode();
 

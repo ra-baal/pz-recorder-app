@@ -14,7 +14,12 @@ namespace Recorder.Model
 
         RecorderState IModel.State => RecorderState.NoSensor;
 
-        WriteableBitmap IModel.ColorBitmap => new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null);
+        WriteableBitmap[] IModel.ColorBitmaps =>
+            new WriteableBitmap[]
+            {
+                new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null),
+                new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null)
+            };
 
         void IModel.PreviewMode() { /*pass*/ }
 
