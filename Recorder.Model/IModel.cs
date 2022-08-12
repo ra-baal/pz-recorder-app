@@ -13,6 +13,7 @@ namespace Recorder.Model
         WriteableBitmap[] ColorBitmaps { get; }
         void RecordingMode();
         void PreviewMode();
+        int RecorderNumber { get; }
 
         string DirectoryPrefix { get; set; }
         string FilePrefix { get; set; }

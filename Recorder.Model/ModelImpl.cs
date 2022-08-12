@@ -9,8 +9,25 @@ using System.Threading;
 namespace Recorder.Model
 {
     // Nazwa z sufiksem z powodu kolizji z nazwą przestrzeni nazw.
-    public class ModelImpl : RecordingManager, IModel
+    public class ModelImpl : IModel
     {
+        private readonly IRecordingManager _manager;
+
+        public ModelImpl()
+        {
+            try
+            {
+                //throw new Exception("");
+                _manager = new RecordingManager();
+                // Ogólnie to po stronie biblioteki obiekt managera powinien się tworzyć
+                // nawet w przypadku braku kinectów, więc ten wyjątek tutaj pewnie się nie zdarzy.
+            }
+            catch (Exception)
+            {
+                _manager = new FakeRecordingManager();
+            }
+        }
+
         private Timer _timer;
 
         private RecorderState _state = RecorderState.Ready;
@@ -28,20 +45,38 @@ namespace Recorder.Model
 
         RecorderState IModel.State => _state;
 
-        WriteableBitmap[] IModel.ColorBitmaps => base.GetColorBitmaps();
+        WriteableBitmap[] IModel.ColorBitmaps => _manager.GetColorBitmaps();
+
+        public int RecorderNumber => _manager.GetRecordersNumber();
 
         void IModel.PreviewMode()
         {
             _state = RecorderState.Preview;
-            base.PreviewMode();
+            _manager.StopRecording();
         }
 
         void IModel.RecordingMode()
         {
             _state = RecorderState.Recording;
-            base.RecordingMode();
+            _manager.StartRecording();
         }
 
+        public string DirectoryPrefix
+        {
+            get => RecorderSettings._dirprefix;
+            set => RecorderSettings._dirprefix = value;
+        }
 
+        public string FilePrefix
+        {
+            get => RecorderSettings._fileprefix;
+            set => RecorderSettings._fileprefix = value;
+        }
+
+        public string Path
+        {
+            get => RecorderSettings._path;
+            set => RecorderSettings._path = value;
+        }
     }
 }

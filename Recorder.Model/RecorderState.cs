@@ -2,8 +2,8 @@
 {
     public enum RecorderState
     {
-        NoSensor = 0,
-        Ready,
+        NoSensor,
+        Ready, // Ten stan może trzeba wyrzucić? Bo obecnie kinecty od razu są w trybie podglądu.
         Preview,
         Recording
     }

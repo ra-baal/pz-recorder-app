@@ -9,10 +9,10 @@ namespace Recorder.Model
     public interface IRecordingManager
     {
         int GetRecordersNumber();
-        RecorderState[] GetStates();
+        //RecorderState[] GetStates();
         WriteableBitmap[] GetColorBitmaps();
-        //(byte b, byte g, byte r)[] GetColorBitmap();
-        void RecordingMode();
-        void PreviewMode();
+        public void StartRecording();
+        public void StopRecording();
+        public void SetDirectory(string directory);
     }
 }

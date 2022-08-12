@@ -33,18 +33,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!--<Viewbox Grid.Row="0" Stretch="Uniform" HorizontalAlignment="Center" x:Name="VBox" >-->
-            <!--<Image Name="Image" Width="640" Height="480">
-                <Image.Source>
-                    <BitmapImage DecodePixelWidth="200"  
-                                 UriSource="C:\Users\balce\source\ProgramowanieZespolowe\RecorderTest\View\testowyobraz.jpg" />
-                </Image.Source>
-            </Image>-->
-            <!--<Border BorderThickness="5" BorderBrush="{Binding RecorderState, Mode=OneWay, Converter={StaticResource state2brush}}">
-                <Image Width="640" Height="480" Source="{Binding Path=RecordedImage, Mode=OneWay}"/>
-            </Border>-->
-        <!--</Viewbox>-->
+        
         <StackPanel Grid.Row="0" VerticalAlignment="Center" x:Name="Panel">
             <ScrollViewer HorizontalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding RecorderData}">
@@ -56,7 +45,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Height="400" BorderThickness="5" BorderBrush="{Binding [0], Mode=OneWay, Converter={StaticResource state2brush}}">
-                                <Image Source="{Binding [1][0], Mode=OneWay}"></Image> 
+                                <Image Source="{Binding [1], Mode=OneWay}"></Image> 
                                 <!--TODO: Usunąć drugi indeks w Image po dostosowaniu-->
                             </Border>
                         </DataTemplate>
