@@ -25,7 +25,7 @@ namespace Recorder.Model
 
         private void* _objptr;
         private bool _disposedValue;
-        private WriteableBitmap[] _colorBitmaps;
+        private WriteableBitmap[]? _colorBitmaps;
         //private WriteableBitmap _colorBitmap1;
 
         private const double _dpi = 96.0; // Wartość z projektu Kinect SDK ColorBasics-WPF.

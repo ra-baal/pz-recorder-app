@@ -4,25 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Recorder.View"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
         mc:Ignorable="d"
         Title="Settings" Height="300" Width="450"
         ResizeMode="NoResize">
     <DockPanel LastChildFill="False">
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-            <Label Content="_Nazwa katalogu:" Target="{Binding ElementName=dirName}" DockPanel.Dock="top"></Label>
-            <TextBox Name="dirName" Width="150" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Text="{Binding DirectoryName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
+            <Label Content="_Nazwa katalogu:" Target="{Binding ElementName=dirName}" Margin="10,10,0,0" DockPanel.Dock="top"></Label>
+            <TextBox Name="dirName" Width="150" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="20, 5, 0, 0" Text="{Binding DirectoryName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-            <Label Content="_Przedrostek pliku:" Target="{Binding ElementName=filePrefix}" DockPanel.Dock="top"></Label>
-            <TextBox Name="filePrefix" Width="150" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Text="{Binding FilePrefix, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
+            <Label Content="_Przedrostek pliku:" Target="{Binding ElementName=filePrefix}" Margin="10,10,0,0" DockPanel.Dock="top"></Label>
+            <TextBox Name="filePrefix" Width="150" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="20, 5, 0, 0" Text="{Binding FilePrefix, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
             <DockPanel DockPanel.Dock="Left" LastChildFill="False">
-                <Label Content="_Ścieżka:" Target="{Binding ElementName=path}" DockPanel.Dock="top"></Label>
-                <TextBox Name="path" Width="300" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Text="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
+                <Label Content="_Ścieżka:" Target="{Binding ElementName=path}" Margin="10,10,0,0" DockPanel.Dock="top"></Label>
+                <TextBox Name="path" Width="300" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="20, 5, 0, 0" Text="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">
-                <Button Width="85" Margin="10,0,0,0" Content="Przeglądaj" Command="{Binding OpenFolderDialog}" CommandParameter="{Binding ElementName=path}"></Button>
+                <Button Width="100" Margin="10,0,0,0" Content="Przeglądaj" Command="{Binding OpenFolderDialog}" CommandParameter="{Binding ElementName=path}"></Button>
             </DockPanel>
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False">

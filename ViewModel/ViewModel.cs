@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Recorder.Model;
@@ -32,28 +33,29 @@ namespace Recorder.ViewModel
 
         #region Binded properties.
 
-        //public List<List<object>> RecorderData =>
-        //    RecorderState.Zip(RecordedImage, (k, v) => new List<object> { k, v }).ToList();
-        public List<List<object>> RecorderData
-        {
-            get
-            {
-                WriteableBitmap[] images = _model.ColorBitmaps;
+        public List<List<object>> RecorderData =>
+            RecorderState.Zip(RecordedImage, (k, v) => new List<object> { k, v }).ToList();
+        //public List<List<object>> RecorderData
+        //{
+        //    get
+        //    {
+        //        WriteableBitmap[] images = _model.ColorBitmaps;
 
-                var objs = new List<List<object>>();
+        //        var objs = new List<List<object>>();
 
-                foreach (var image in images)
-                    objs.Add(new List<object> { "", image });
+        //        foreach (var image in images)
+        //            objs.Add(new List<object> { RecorderState. , image });
 
-                return objs;
-            }
-        }
+        //        return objs;
+        //    }
+        //}
 
-        //public string GeneralState => _model.Select(m => m.State).Distinct().Min().ToString();
-        public string GeneralState => _model.State.ToString();
+        public string GeneralState => _model.State.Select(m => m).Distinct().Min().ToString();
+        //public string GeneralState => _model.State.ToString();
 
         //public List<string> RecorderState => _model.Select(m => m.State.ToString()).ToList();
-        public List<string> RecorderState => new List<string> { $"Recorders: {_model.RecorderNumber}" , "test"};
+        public List<string> RecorderState => _model.State.Select(m => m.ToString()).ToList();
+        //public List<string> RecorderState => new List<string> { $"Recorders: {_model.RecorderNumber}" , "test"};
 
         //public List<WriteableBitmap[]> RecordedImage => _model.Select(m => m.ColorBitmaps).ToList();
         public WriteableBitmap[] RecordedImage => _model.ColorBitmaps ;
@@ -84,8 +86,8 @@ namespace Recorder.ViewModel
                         _model.RecordingMode();
                         _onPropertyChanged(nameof(RecorderState));
                     },
-                    //o => _model.All(m => m.State is Model.RecorderState.Ready or Model.RecorderState.Preview));
-                    o => _model.State == Model.RecorderState.Ready || _model.State == Model.RecorderState.Preview);
+                o => _model.State.All(m => m is Model.RecorderState.Ready or Model.RecorderState.Preview));
+                //o => _model.State == Model.RecorderState.Ready || _model.State == Model.RecorderState.Preview);
             }
 
         }
@@ -102,8 +104,8 @@ namespace Recorder.ViewModel
                         _model.PreviewMode();
                         _onPropertyChanged(nameof(RecorderState));
                     },
-                    //o => _model.All(m => m.State == Model.RecorderState.Recording));
-                    o => _model.State == Model.RecorderState.Recording);
+                    o => _model.State.All(m => m == Model.RecorderState.Recording));
+                //o => _model.State == Model.RecorderState.Recording);
             }
 
         }

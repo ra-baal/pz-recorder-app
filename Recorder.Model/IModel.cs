@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
 namespace Recorder.Model
@@ -9,7 +10,7 @@ namespace Recorder.Model
     public interface IModel
     {
         void SetOnPreviewImageChanged(Action onPreviewImageChanged);
-        RecorderState State { get; }
+        List<RecorderState> State { get; }
         WriteableBitmap[] ColorBitmaps { get; }
         void RecordingMode();
         void PreviewMode();

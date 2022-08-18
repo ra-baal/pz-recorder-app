@@ -17,7 +17,7 @@ namespace Recorder.Model
         {
             try
             {
-                //throw new Exception("");
+                throw new Exception("");
                 _manager = new RecordingManager();
                 // Ogólnie to po stronie biblioteki obiekt managera powinien się tworzyć
                 // nawet w przypadku braku kinectów, więc ten wyjątek tutaj pewnie się nie zdarzy.
@@ -43,7 +43,7 @@ namespace Recorder.Model
             null, TimeSpan.Zero, TimeSpan.FromMilliseconds(previewRefreshing));
         }
 
-        RecorderState IModel.State => _state;
+        List<RecorderState> IModel.State => new() {_state, RecorderState.Ready};
 
         WriteableBitmap[] IModel.ColorBitmaps => _manager.GetColorBitmaps();
 

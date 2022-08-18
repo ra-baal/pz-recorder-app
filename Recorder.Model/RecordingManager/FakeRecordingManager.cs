@@ -11,7 +11,6 @@ namespace Recorder.Model
             {
                 new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null),
                 new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null),
-                new WriteableBitmap(640, 480, 96, 96, PixelFormats.Bgr32, null)
             };
         }
 
