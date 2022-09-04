@@ -10,7 +10,7 @@ namespace Recorder.Model
     public interface IModel
     {
         void SetOnPreviewImageChanged(Action onPreviewImageChanged);
-        List<RecorderState> State { get; }
+        List<RecorderState> States { get; }
         WriteableBitmap[] ColorBitmaps { get; }
         void RecordingMode();
         void PreviewMode();

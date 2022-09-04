@@ -12,12 +12,13 @@ namespace Recorder.Model
     public class ModelImpl : IModel
     {
         private readonly IRecordingManager _manager;
+        public List<RecorderState> States { get; private set; }
 
         public ModelImpl()
         {
             try
             {
-                throw new Exception("");
+                //throw new Exception("");
                 _manager = new RecordingManager();
                 // Ogólnie to po stronie biblioteki obiekt managera powinien się tworzyć
                 // nawet w przypadku braku kinectów, więc ten wyjątek tutaj pewnie się nie zdarzy.
@@ -26,11 +27,15 @@ namespace Recorder.Model
             {
                 _manager = new FakeRecordingManager();
             }
+
+            States = new List<RecorderState>();
+            for (int i = 0; i < _manager.GetRecordersNumber(); i++)
+                States.Add(RecorderState.Ready);
         }
 
         private Timer _timer;
 
-        private RecorderState _state = RecorderState.Ready;
+        //private RecorderState _state = RecorderState.Ready;
 
         void IModel.SetOnPreviewImageChanged(Action onPreviewImageChanged)
         {
@@ -43,7 +48,6 @@ namespace Recorder.Model
             null, TimeSpan.Zero, TimeSpan.FromMilliseconds(previewRefreshing));
         }
 
-        List<RecorderState> IModel.State => new() {_state, RecorderState.Ready};
 
         WriteableBitmap[] IModel.ColorBitmaps => _manager.GetColorBitmaps();
 
@@ -51,13 +55,19 @@ namespace Recorder.Model
 
         void IModel.PreviewMode()
         {
-            _state = RecorderState.Preview;
+            //_state = RecorderState.Preview;
+            for (int i = 0; i < States.Count; i++)
+                States[i] = RecorderState.Preview;
+
             _manager.StopRecording();
         }
 
         void IModel.RecordingMode()
         {
-            _state = RecorderState.Recording;
+            //_state = RecorderState.Recording;
+            for (int i = 0; i < States.Count; i++)
+                States[i] = RecorderState.Recording;
+
             _manager.StartRecording();
         }
 

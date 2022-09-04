@@ -50,11 +50,11 @@ namespace Recorder.ViewModel
         //    }
         //}
 
-        public string GeneralState => _model.State.Select(m => m).Distinct().Min().ToString();
+        public string GeneralState => _model.States.Select(m => m).Distinct().Min().ToString();
         //public string GeneralState => _model.State.ToString();
 
         //public List<string> RecorderState => _model.Select(m => m.State.ToString()).ToList();
-        public List<string> RecorderState => _model.State.Select(m => m.ToString()).ToList();
+        public List<string> RecorderState => _model.States.Select(m => m.ToString()).ToList();
         //public List<string> RecorderState => new List<string> { $"Recorders: {_model.RecorderNumber}" , "test"};
 
         //public List<WriteableBitmap[]> RecordedImage => _model.Select(m => m.ColorBitmaps).ToList();
@@ -86,7 +86,7 @@ namespace Recorder.ViewModel
                         _model.RecordingMode();
                         _onPropertyChanged(nameof(RecorderState));
                     },
-                o => _model.State.All(m => m is Model.RecorderState.Ready or Model.RecorderState.Preview));
+                o => _model.States.All(m => m is Model.RecorderState.Ready or Model.RecorderState.Preview));
                 //o => _model.State == Model.RecorderState.Ready || _model.State == Model.RecorderState.Preview);
             }
 
@@ -104,7 +104,7 @@ namespace Recorder.ViewModel
                         _model.PreviewMode();
                         _onPropertyChanged(nameof(RecorderState));
                     },
-                    o => _model.State.All(m => m == Model.RecorderState.Recording));
+                    o => _model.States.All(m => m == Model.RecorderState.Recording));
                 //o => _model.State == Model.RecorderState.Recording);
             }
 
